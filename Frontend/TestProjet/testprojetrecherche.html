@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barre de recherche</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="testprojetrecherche.css">
+</head>
+<body>
+    <div class="search-bar">
+        <!-- Champ Lieu -->
+        <div class="autocomplete">
+            <input type="text" id="location" placeholder="Destination" onkeyup="suggestLocations(this.value)">
+            <ul id="suggestions"></ul>
+        </div>
+        
+        <!-- Champ Dates -->
+        <input type="text" id="date-range" placeholder="Date de départ - Date de retour" readonly>
+
+        <!-- Champ Personnes -->
+        <div class="dropdown">
+            <input type="text" id="guests" placeholder="2 adultes - 0 enfants" readonly>
+            <div class="dropdown-menu">
+                <label>Adultes:</label>
+                <input type="number" id="adults" min="1" value="2">
+                <label>Enfants:</label>
+                <input type="number" id="children" min="0" value="0">
+            </div>
+        </div>
+
+        <!-- Bouton Rechercher -->
+        <button id="search-button" onclick="search()">Rechercher</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="testprojetrecherche.js"></script>
+</body>
+</html>

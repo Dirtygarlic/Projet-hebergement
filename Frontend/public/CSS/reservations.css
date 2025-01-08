@@ -1,0 +1,85 @@
+* Paramètres généraux */
+    * {
+        padding: 0; /* Supprime les marges internes par défaut */
+        margin: 0; /* Supprime les marges externes par défaut */
+        box-sizing: border-box; /* Inclut la bordure et le padding dans la taille totale des éléments */
+    }
+
+    
+/* Début codage CSS du Header--------------------------------------------------------------*/
+
+/* Header */
+    header {
+        display: flex; /* Utiliser Flexbox pour aligner le contenu */
+        justify-content: space-between; /* Espacement entre logo et barre de recherche */
+        align-items: center; /* Centrer verticalement les éléments */
+        padding: 10px 20px; /* Espacement interne du header */
+        background-color : #f0f0f0; /* Couleur de fond du header */
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;  
+
+    }
+
+    /* 2_ Mise en forme du logo*/
+    .image2 {
+        display: flex; /* Utilise flexbox pour centrer l'image */
+        justify-content: center; /* Centre l'image horizontalement */
+        align-items: center; /* Centre l'image verticalement */
+        height: 120px; /* Définit la hauteur de l'image */
+        border-radius: 10px; /* Arrondit les coins de l'image */
+        }
+    
+
+    /* Style du bouton */
+    .dropbtn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    /* Style du menu déroulant */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    /* Style des sections dans le menu */
+    .dropdown-section {
+        margin-bottom: 10px;
+    }
+
+    .dropdown-section strong {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .dropdown-content a {
+        color: black;
+        padding: 8px 12px;
+        text-decoration: none;
+        display: block;
+        border-radius: 3px;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Afficher le menu au clic */
+    .show {
+        display: block;
+    }
