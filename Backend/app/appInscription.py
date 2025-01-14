@@ -19,7 +19,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuration de la base de données SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///reservations.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///inscription.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Configuration de Flask-Mail
@@ -176,7 +176,7 @@ def send_test_email():
         return f"Erreur : {str(e)}", 500
 
  # Route pour delete un id_user 
- # commande dans le terminal : curl -X DELETE http://127.0.0.1:5000/delete_user/3 
+ # commande dans le terminal : curl -X DELETE http://127.0.0.1:5000/delete_user/29
 @app.route('/delete_user/<int:id_user>', methods=['DELETE'])
 def delete_user(id_user):
     user_to_delete = User.query.get(id_user)

@@ -1,78 +1,4 @@
-// Afficher une menu deroulant qui propose des destinations en fonction de la recherche
-const data = [ // Afrique
-    "Alger", "Luanda", "Porto-Novo", "Gaborone", "Ouagadougou", "Bujumbura", 
-    "Yaoundé", "Praia", "Bangui", "N'Djamena", "Moroni", "Kinshasa", "Brazzaville", 
-    "Djibouti", "Le Caire", "Malabo", "Asmara", "Addis-Abeba", "Libreville", "Banjul", 
-    "Accra", "Conakry", "Bissau", "Nairobi", "Maseru", "Monrovia", "Tripoli", 
-    "Antananarivo", "Lilongwe", "Bamako", "Nouakchott", "Port-Louis", "Rabat", 
-    "Maputo", "Windhoek", "Niamey", "Abuja", "Kigali", "São Tomé", "Dakar", 
-    "Victoria", "Freetown", "Mogadiscio", "Pretoria", "Juba", "Khartoum", 
-    "Mbabane", "Dodoma", "Lomé", "Tunis", "Kampala", "Lusaka", "Harare",
-
-    // Amérique
-    "Saint John's", "Buenos Aires", "Nassau", "Bridgetown", "Belmopan", 
-    "Sucre", "Brasília", "Ottawa", "Santiago", "Bogotá", "San José", 
-    "La Havane", "Roseau", "Saint-Domingue", "Quito", "San Salvador", 
-    "Saint-Georges", "Guatemala", "Georgetown", "Port-au-Prince", "Tegucigalpa", 
-    "Kingston", "Mexico", "Managua", "Panama", "Asuncion", "Lima", 
-    "Basseterre", "Castries", "Kingstown", "Paramaribo", "Port-d'Espagne", 
-    "Montevideo", "Caracas", "Washington D.C.",
-
-    // Asie
-    "Kaboul", "Riyad", "Erevan", "Bakou", "Manama", "Dacca", "Thimphou", 
-    "Bandar Seri Begawan", "Naypyidaw", "Phnom Penh", "Pékin", "Nicosie", 
-    "Pyongyang", "Séoul", "Tbilissi", "New Delhi", "Jakarta", "Téhéran", 
-    "Bagdad", "Tel Aviv", "Tokyo", "Amman", "Astana", "Koweït", "Bichkek", 
-    "Vientiane", "Beyrouth", "Kuala Lumpur", "Malé", "Oulan-Bator", "Katmandou", 
-    "Mascate", "Islamabad", "Manille", "Doha", "Moscou", "Riyad", "Singapour", 
-    "Colombo", "Damas", "Douchanbé", "Bangkok", "Ankara", "Achgabat", "Abou Dabi", 
-    "Tachkent", "Hanoï", "Sana'a",
-
-    // Europe
-    "Tirana", "Andorre-la-Vieille", "Vienne", "Minsk", "Bruxelles", 
-    "Sarajevo", "Sofia", "Zagreb", "Nicosie", "Prague", "Copenhague", 
-    "Tallinn", "Helsinki", "Paris", "Tbilissi", "Berlin", "Athènes", 
-    "Budapest", "Reykjavik", "Dublin", "Rome", "Pristina", "Riga", 
-    "Vaduz", "Vilnius", "Luxembourg", "La Valette", "Chisinau", 
-    "Monaco", "Podgorica", "Amsterdam", "Skopje", "Oslo", "Varsovie", 
-    "Lisbonne", "Bucarest", "Moscou", "Saint-Marin", "Belgrade", 
-    "Bratislava", "Ljubljana", "Madrid", "Stockholm", "Berne", "Kiev", 
-    "Londres", "Cité du Vatican",
-
-    // Océanie
-    "Canberra", "Suva", "Tarawa", "Majuro", "Palikir", "Wellington", 
-    "Ngerulmud", "Port Moresby", "Apia", "Honiara", "Nukuʻalofa", 
-    "Funafuti", "Port-Vila", "Yaren"];
-
-function autoComplete() {
-    const input = document.getElementByClass("search-input3");
-    const suggestions = document.getElementById("suggestions");
-    const query = input.value.toLowerCase();
-
-    // Réinitialise les suggestions
-    suggestions.innerHTML = "";
-
-    // Affiche les suggestions si la saisie a au moins 3 lettres
-    if (query.length >= 3) {
-        const filteredData = data.filter(item => item.toLowerCase().includes(query));
-
-        // Ajoute les suggestions filtrées
-        filteredData.forEach(item => {
-            const li = document.createElement("li");
-            li.textContent = item;
-
-            // Remplit le champ d'entrée lors d'un clic
-            li.addEventListener("click", () => {
-                input.value = item;
-                suggestions.innerHTML = "";
-            });
-
-            suggestions.appendChild(li);
-        });
-    }
-}
-
-// 2 LA FENETRE MODALE------------------------------------------------------------
+// 1 : LA FENETRE MODALE------------------------------------------------------------
 
 // Validation du numéro de téléphone
 document.getElementById("register-phone").addEventListener("input", function () {
@@ -192,7 +118,7 @@ async function submitRegister(event) {
 
         if (response.ok) {
             const userData = await response.json();
-            alert('Inscription réussie !');
+            alert('Inscription réussie ! Un e-mail de bienvenue a été envoyé à ' + formData.email)
             if (userData.first_name && userData.name) {
                 showUserInfo(userData.first_name, userData.name);
             } else {
@@ -309,61 +235,177 @@ document.querySelector("form").addEventListener("submit", function(event) {
 */
 });
 
-// script.js
 
-// Fonction pour changer la langue
-function toggleDropdown() {
-    document.getElementById("languageDropdown").classList.toggle("show");
+
+
+
+
+// 2 : LA BARRE DE RECHERCHE CONTINENT, PAYS, VILLES --------------------------------------------
+
+    // Fonction pour gérer la barre de recherche avec suggestions
+async function autoComplete(query) {
+    // Vérifie si la saisie est inférieure à 3 caractères
+    if (query.length < 3) {
+        document.getElementById('suggestions').innerHTML = '';
+        return;
+    }
+
+    try {
+        // Appel à l'API Flask pour récupérer les suggestions
+        const response = await fetch(`http://localhost:5001/api/search?query=${query}`);
+        const suggestions = await response.json();
+
+        // Génère le HTML pour les suggestions
+        let suggestionHTML = '';
+        suggestions.forEach(suggestion => {
+            const typeClass = suggestion.type; // Récupère le type (continent, country, city)
+            suggestionHTML += `<li class="${typeClass}" onclick="selectSuggestion('${suggestion.name}', '${typeClass}')">${suggestion.name}</li>`;
+        });
+
+        // Met à jour le menu déroulant avec les suggestions
+        document.getElementById('suggestions').innerHTML = suggestionHTML;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des suggestions :", error);
+    }
 }
-function changeLanguage(language) {
-    // Sélectionner tous les éléments avec un attribut data-en ou data-fr
-    const elements = document.querySelectorAll('[data-en], [data-fr], [data-es]');
 
-    // Parcourir chaque élément et mettre à jour son contenu
-    elements.forEach(element => {
-        if (language === 'fr') {
-            element.textContent = element.getAttribute('data-fr') || element.textContent;
-        } else if (language === 'en') {
-            element.textContent = element.getAttribute('data-en') || element.textContent;
+    // Fonction pour gérer la sélection d'une suggestion
+function selectSuggestion(name, type) {
+    const inputField = document.getElementById('city');
+    inputField.value = name; // Met à jour le champ de recherche avec la suggestion choisie
+    document.getElementById('suggestions').innerHTML = ''; // Vide le menu déroulant après sélection
+
+    // Affiche un message de debug facultatif
+    console.log(`Vous avez sélectionné : ${name} (${type})`);
+}
+
+    // Gestionnaire d'événement pour fermer les suggestions lorsqu'on clique en dehors
+document.addEventListener('click', (event) => {
+    const suggestionsBox = document.getElementById('suggestions');
+    const inputField = document.getElementById('city');
+    
+    if (!suggestionsBox.contains(event.target) && event.target !== inputField) {
+        suggestionsBox.innerHTML = ''; // Vide les suggestions
+    }
+});
+
+// 3 : LLE CALENDRIER DE RESERVATION------------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialisation de flatpickr pour le champ de date
+    flatpickr("#date-range", {
+        mode: "range", // Permet de sélectionner une plage de dates
+        dateFormat: "d-m-Y", // Format des dates (jour-mois-année)
+        minDate: "today", // Ne pas pouvoir sélectionner de dates passées
+        locale: "fr", // Langue française pour les mois et jours
+        disableMobile: true, // Désactive la version mobile pour un meilleur affichage sur desktop
+    });
+
+    // Ajout de l'écouteur d'événement pour l'envoi du formulaire
+    document.getElementById("search-form").addEventListener("submit", async function (e) {
+        e.preventDefault();  // Empêcher l'envoi du formulaire classique
+        
+        // Validation de la plage de dates avant envoi
+        const dateRangeInput = document.getElementById("date-range");
+        if (!dateRangeInput.value) {
+            alert("Veuillez sélectionner une plage de dates.");
+            return;
+        }
+
+        const selectedDates = dateRangeInput.value; // Récupérer la plage de dates sélectionnée
+        console.log("Plage de dates sélectionnée:", selectedDates);
+
+        try {
+            // Envoi des données au serveur Flask (date_range et autres éventuelles données)
+            const response = await fetch(`http://localhost:5002/recherche`, {
+                method: 'POST',
+                body: new FormData(document.getElementById('search-form'))  // Envoi des données du formulaire
+            });
+
+            const result = await response.json();  // On attend la réponse JSON du serveur
+            if (result.status === 'success') {
+                alert(result.message);  // Affichage du message de succès
+            } else {
+                alert(result.message);  // Affichage du message d'erreur
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'appel à l'API:", error);
         }
     });
+});
+
+
+// 4 : LE CHOIX DES VOYAGEURS ET DES CHAMBRES------------------------------------------------------------
+
+// Fonction pour afficher/masquer le menu déroulant
+function toggleDropdown() {
+    const dropdown = document.getElementById('peopleDropdown');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
 }
 
-/* Changer la langue (simplement un exemple pour changer l'URL ou le contenu)
-function changeLanguage(lang) {
-    if (lang === 'fr') {
-        window.location.href = "/fr";
-    } else if (lang === 'en') {
-        window.location.href = "/en";
-    } else if (lang === 'es') {
-        window.location.href = "/es";
-    } else if (lang === 'zh') {
-        window.location.href = "/zh";
-    } else if (lang === 'hi') {
-        window.location.href = "/hi";
-    } else if (lang === 'ar') {
-        window.location.href = "/ar";
-    } else if (lang === 'bn') {
-        window.location.href = "/bn";
-    } else if (lang === 'ru') {
-        window.location.href = "/ru";
-    } else if (lang === 'pt') {
-        window.location.href = "/pt";
-    } else if (lang === 'ur') {
-        window.location.href = "/ur";
-    }
-}
-*/
+// Fonction pour mettre à jour dynamiquement le placeholder
+function updatePlaceholder() {
+    const numAdults = document.getElementById('adults').value;
+    const numChildren = document.getElementById('children').value;
+    const numRooms = document.getElementById('rooms').value;
 
-// Fermer le menu déroulant si on clique en dehors
-window.onclick = function(event) {
-    if (!event.target.matches('.dropbtn')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        for (var i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
-            }
+    const placeholderText = `${numAdults} adulte${numAdults > 1 ? 's' : ''} - ${numChildren} enfant${numChildren > 1 ? 's' : ''} - ${numRooms} chambre${numRooms > 1 ? 's' : ''}`;
+    document.getElementById('peopleInput').value = placeholderText; // Met à jour la valeur du champ input
+}
+
+// Gestion du changement du nombre d'adultes
+document.getElementById('adults').addEventListener('change', function () {
+    console.log('Nombre d\'adultes :', this.value);
+    updatePlaceholder(); // Mettre à jour le placeholder
+});
+
+// Afficher les champs d'âge des enfants si le nombre d'enfants est supérieur à 0
+document.getElementById('children').addEventListener('change', function () {
+    const childrenAgesContainer = document.getElementById('childrenAges');
+    childrenAgesContainer.innerHTML = ''; // Réinitialiser le contenu
+
+    const numChildren = parseInt(this.value);
+    if (numChildren > 0) {
+        childrenAgesContainer.style.display = 'block';
+
+        for (let i = 1; i <= numChildren; i++) {
+            const label = document.createElement('label');
+            label.setAttribute('for', `childAge${i}`);
+            label.textContent = `Âge de l'enfant ${i} :`;
+
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.id = `childAge${i}`;
+            input.name = `childAge${i}`;
+            input.min = 0;
+            input.placeholder = 'Âge';
+
+            childrenAgesContainer.appendChild(label);
+            childrenAgesContainer.appendChild(input);
         }
+    } else {
+        childrenAgesContainer.style.display = 'none';
     }
-}
+    updatePlaceholder(); // Mettre à jour le placeholder
+});
+
+// Gestion du changement du nombre de chambres
+document.getElementById('rooms').addEventListener('change', function () {
+    console.log('Nombre de chambres :', this.value);
+    updatePlaceholder(); // Mettre à jour le placeholder
+});
+
+// Gestion de la sélection du voyage avec un animal de compagnie
+document.getElementById('pets').addEventListener('change', function () {
+    console.log('Voyage avec animal de compagnie :', this.checked);
+});
+
+// Fermer le dropdown si on clique en dehors du menu
+window.onclick = function (event) {
+    const dropdown = document.getElementById('peopleDropdown');
+    if (!event.target.closest('.dropdown-content') && event.target.id !== 'peopleInput') {
+        dropdown.style.display = 'none';
+    }
+};
+
+

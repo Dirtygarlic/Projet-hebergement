@@ -6,10 +6,11 @@
         <meta name="keywords" content="booking, reservation, motel, hotel, car, voiture, boat, bateau, restaurant, flight, vols"> <!-- je ne sais pas trop quoi mettre ici -->
         <meta name="description" content="JustDreams — Trouvez l'hébergement Idéal sur JustDreams.com, le Plus Grand Site de Voyages au Monde. Des Réservations Faciles, Rapides, Sécurisées et Sans Frais, et un Tarif Garanti. Motels.">  
         <title> JustDreams - Réservez votre prochain voyage  </title>
-        <link rel="stylesheet" href="/Users/remylenne/Desktop/Projet2/Frontend/public/CSS/index.css">
+        <link rel="stylesheet" href="/Users/remylenne/Desktop/Projet2/static/CSS/index.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <link href="/Users/remylenne/Desktop/Projet2/Frontend/public/JS/bootstrap.min.js" rel="stylesheet">
+        <link href="/Users/remylenne/Desktop/Projet2/static/JS/bootstrap.min.js" rel="stylesheet">
         <link rel="icon" href="/Users/remylenne/Desktop/Projet2/Frontend/Image/JustDreams.ico" type="image/x-icon">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
    </head>
 
    <body>
@@ -98,21 +99,70 @@
                 </form>
             </div>
            
-            <!-- Recherche du voyage -->
-            <div class="reservation-container2"> 
-                <!-- Champ Lieu -->
-                <div class="autoComplete">
-                    <input type="text" id="city"  class="search-input3" placeholder="Destination de vos rêves?"  onkeyup="autoComplete(this.value)">
-                    <ul id="suggestions"></ul>
-                </div>
-                
-                <!-- Champ Dates -->
-                <input type="text" id="date-range" class="search-input4"  placeholder="Date de départ - Date de retour" readonly>
+            <!-- Barre de recherche avec suggestions -->
+            <div class="reservation-container2">
+               <!-- <form id="search-form" action="/recherche" method="POST"> PROBLEME CSS AVEC LE FORMULAIRE-->
+                    <!-- Lieu avec suggestions -->
+                    <div class="autoComplete">
+                        <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves?" onkeyup="autoComplete(this.value)">
+                        <ul id="suggestions" class="suggestions-list"></ul>
+                    </div>
 
-                <!-- Champ Personnes -->
-                <input type="text" placeholder="2 adultes - 0 enfant - 1 chambre" class="search-input5">
+                    <!-- Date d'arrivée et date de départ -->
+                    <div class="date-picker-container">
+                        <input type="text" id="date-range" name="date_range" class="search-input4" placeholder="Date d'arrivée - Date de départ" readonly>
+                    </div>
 
-                <input type="submit" class="search-button2" value="Rechercher">
+                    <!-- Nombre de personnes (adultes, enfants) -->
+                    <div class="people-selector">
+                        <input type="text" id="peopleInput" placeholder="2 adultes - 0 enfant - 1 chambre" class="search-input5" readonly onclick="toggleDropdown()">
+                        <div id="peopleDropdown" class="dropdown-content">
+                            <label for="adults">Nombre d'adultes :</label>
+                            <select id="adults" name="adults">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                            </select>
+
+                            <label for="children">Nombre d'enfants :</label>
+                            <select id="children" name="children">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                            </select>
+
+                            <div id="childrenAges" style="display: none;">
+                                <label for="childAge1">Âge de l'enfant 1 :</label>
+                                <input type="number" id="childAge1" name="childAge1" min="0" placeholder="Âge">
+                            </div>
+
+                            <label for="rooms">Nombre de chambres :</label>
+                            <select id="rooms" name="rooms">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+
+                            <label for="pets">Voyage avec un animal de compagnie ?</label>
+                            <input type="checkbox" id="pets" name="pets"> Oui
+                        </div>
+                    </div>
+
+                    <!-- Bouton de recherche -->
+                    <input type="submit" class="search-button2" value="Rechercher">
+               <!-- </form> PROBLEME CSS AVEC LE FORMULAIRE-->
             </div>
 
             <!-- choix de la langue-->
@@ -160,7 +210,7 @@
                     <h3>Contact</h3>
                     <p class="p2"><strong>Adresse :</strong> 777 Rue du Paradis, Paris, France</p>
                     <p class="p2"><strong>Téléphone :</strong> +33 1 23 45 67 89</p>
-                    <p class="p2"><strong>Email :</strong> justdreams@gmail.com</p>
+                    <p class="p2"><strong>Email :</strong> justdreams06@gmail.com</p>
                 </div>
     
                 <div class="useful-links">
@@ -195,6 +245,7 @@
             <p class="p3">&copy; 2024 JustDreams. Tous droits réservés.</p>
             </div>
         </footer>
-        <script src="/Users/remylenne/Desktop/Projet2/Frontend/public/JS/JustDreams.js" defer></script>
+        <script src="/Users/remylenne/Desktop/Projet2/static/JS/JustDreams.js" defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     </body>
 </html>

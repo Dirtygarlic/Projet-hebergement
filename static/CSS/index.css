@@ -181,44 +181,129 @@
         height: 60px;
    }
 
-    .search-button2 {
-        padding: 10px; /* Espace intérieur pour rendre le bouton plus grand */
-        background-color : #f0f0f0; /* Couleur de fond du header */
-        color: RGB(146, 174, 201); /* Couleur du texte du bouton */
-        text-align: center;
-        font-size:15px;
-        font-weight:bold;
-        border: 4px solid RGB(146, 174, 201); /* Bordure du champ de saisie */
-        border-radius: 0px 4px 4px 0px;
-        cursor: pointer; /* Change le curseur en main lors du survol */
-    }
+ /* Liste des suggestions */
+/* Liste des suggestions */
+/* Liste des suggestions */
+.suggestions-list {
+    list-style: none; /* Enlève les puces (bullet points) de la liste */
+    margin: 0; /* Enlève toute marge extérieure de la liste */
+    padding: 0; /* Enlève tout padding (espacement intérieur) de la liste */
+    position: absolute; /* Positionne la liste de manière absolue par rapport à son parent (permet de la superposer à d'autres éléments) */
+    background-color: white; /* Définit la couleur de fond de la liste en blanc */
+    max-height: 150px; /* Limite la hauteur maximale de la liste à 150px */
+    overflow-y: auto; /* Ajoute une barre de défilement verticale si le contenu dépasse la hauteur maximale */
+    width: 220px; /* Définit la largeur de la liste à 220px */
+    z-index: 10; /* Définit l'ordre de superposition (les éléments avec un z-index plus élevé seront affichés au-dessus des autres) */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajoute une ombre légère autour de la liste pour lui donner un effet de profondeur */
+}
 
-    .search-input3, .search-input4, .search-input5 {
-        padding: 10px; /* Espacement interne du champ de saisie */
-        font-size: 15px; /* Taille de la police */
-        border: 4px solid RGB(146, 174, 201); /* Bordure du champ de saisie */
-        background-color: rgb(230, 220, 212) ; /* Couleur de fond du bouton */
-        color: RGB(146, 174, 201);
-        width: 220px;
-        margin:0;
-    }
+/* Style des éléments de suggestion */
+.suggestions-list li {
+    padding: 8px 10px; /* Ajoute un espacement intérieur (padding) de 8px en haut et en bas, 10px à gauche et à droite pour chaque élément de la liste */
+    cursor: pointer; /* Change le curseur de la souris en main (pointer) lorsque l'on survole un élément de la liste */
+    transition: background-color 0.2s ease-in-out; /* Ajoute une transition fluide au changement de couleur de fond (background-color) sur 0.2 seconde */
+}
 
-    .search-input3 {
-        border-radius: 4px 0px 0px 4px;
-    }
+/* État au survol d'un élément de la liste */
+.suggestions-list li:hover {
+    background-color: #f0f0f0; /* Change la couleur de fond de l'élément au survol (hover) en gris clair (#f0f0f0) */
+}
 
-    .search-input4, .search-input5 {
-        width:250px;
-    }
+/* Différenciation par type : style des éléments avec la classe "continent" */
+.suggestions-list li.continent {
+    color: #3498db; /* Définit la couleur du texte en bleu (#3498db) pour les éléments de type "continent" */
+    font-weight: bold; /* Rend le texte en gras pour les éléments de type "continent" */
+}
 
-    .search-button2:hover {
-        background-color: RGB(146, 174, 201); /* Change la couleur de fond au survol */
-        color: white; /* Change la couleur du texte au survol */
-    }
+/* Différenciation par type : style des éléments avec la classe "country" */
+.suggestions-list li.country {
+    color: #2ecc71; /* Définit la couleur du texte en vert (#2ecc71) pour les éléments de type "country" */
+}
 
-    .search-input3:hover, .search-input4:hover, .search-input5:hover {
-        cursor: text;
-    }
+/* Différenciation par type : style des éléments avec la classe "city" */
+.suggestions-list li.city {
+    color: #e74c3c; /* Définit la couleur du texte en rouge (#e74c3c) pour les éléments de type "city" */
+}
+
+.search-button2 {
+    padding: 10px; /* Espace intérieur pour rendre le bouton plus grand */
+    background-color : #f0f0f0; /* Couleur de fond du header */
+    color: RGB(146, 174, 201); /* Couleur du texte du bouton */
+    text-align: center;
+    font-size:15px;
+    font-weight:bold;
+    border: 4px solid RGB(146, 174, 201); /* Bordure du champ de saisie */
+    border-radius: 0px 4px 4px 0px;
+    cursor: pointer; /* Change le curseur en main lors du survol */
+}
+
+.search-input3, .search-input4, .search-input5 {
+    padding: 10px; /* Espacement interne du champ de saisie */
+    font-size: 15px; /* Taille de la police */
+    border: 4px solid RGB(146, 174, 201); /* Bordure du champ de saisie */
+    background-color: rgb(230, 220, 212) ; /* Couleur de fond du bouton */
+    color: RGB(146, 174, 201);
+    width: 220px;
+    margin:0;
+}
+
+.search-input3 {
+    border-radius: 4px 0px 0px 4px;
+} 
+
+.search-input4, .search-input5 {
+    width:250px;
+}
+
+.search-button2:hover {
+    background-color: RGB(146, 174, 201); /* Change la couleur de fond au survol */
+    color: white; /* Change la couleur du texte au survol */
+}
+
+.search-input3:hover, .search-input4:hover, .search-input5:hover {
+    cursor: text;
+}
+
+/* Style du champs nb voyageurs et nb chambres */
+.dropdown-content {
+    display: none; /* Masquer le menu déroulant par défaut. Il est caché jusqu'à ce qu'on interagisse avec le champ de saisie */
+    position: absolute; /* Permet au menu déroulant d'être positionné indépendamment dans la page (pas dans le flux normal du document) */
+    background-color: white; /* Définir la couleur de fond du menu déroulant à blanc */
+    min-width: 250px; /* Définit une largeur minimale pour le menu déroulant de 250px */
+    border: 1px solid #ddd; /* Ajouter une bordure de couleur gris clair autour du menu déroulant */
+    padding: 10px; /* Ajoute un espacement interne autour du contenu du menu déroulant */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Ajoute une ombre portée sous le menu pour lui donner un effet flottant */
+    z-index: 1; /* Définit l'ordre d'empilement des éléments. Avec z-index: 1, ce menu sera affiché au-dessus des autres éléments ayant un z-index plus bas ou aucun */
+}
+
+/* Afficher le menu déroulant lorsqu'on clique sur le champ de saisie */
+.search-input5:focus + .dropdown-content {
+    display: block; /* Lorsque l'élément avec la classe 'search-input5' reçoit le focus (l'utilisateur clique dessus), on affiche le dropdown (en changeant le display de 'none' à 'block') */
+}
+
+/* Style des éléments 'label' dans le dropdown */
+.dropdown-content label {
+    display: block; /* Chaque label sera un élément de bloc (il occupe toute la largeur disponible) */
+    margin: 10px 0 5px; /* Ajoute une marge autour des labels : 10px en haut et 5px en bas pour espacer les éléments du dropdown */
+}
+
+/* Style des éléments 'select' et 'input' dans le dropdown */
+.dropdown-content select,
+.dropdown-content input {
+    width: 100%; /* Donne à ces éléments une largeur de 100% pour qu'ils prennent toute la largeur disponible du dropdown */
+    padding: 5px; /* Ajoute un espacement interne autour du texte ou des options pour améliorer l'apparence et la lisibilité */
+    margin-bottom: 10px; /* Ajoute une marge en bas de ces éléments pour les espacer des autres éléments du dropdown */
+}
+
+/* Style du champ de saisie pour "Nombre de personnes" */
+#peopleInput {
+    cursor: pointer; /* Change le curseur de la souris en une main lorsque l'utilisateur survole l'élément, ce qui indique qu'il est cliquable */
+}
+
+
+
+
+
 
  /* Style du bouton pour modifier la langue */
     .dropbtn {
