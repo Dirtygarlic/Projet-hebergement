@@ -1,85 +1,653 @@
-* Paramètres généraux */
-    * {
-        padding: 0; /* Supprime les marges internes par défaut */
-        margin: 0; /* Supprime les marges externes par défaut */
-        box-sizing: border-box; /* Inclut la bordure et le padding dans la taille totale des éléments */
-    }
 
-    
+
+/* Paramètres généraux */
+* {
+    padding: 0; /* Supprime les marges internes par défaut */
+    margin: 0; /* Supprime les marges externes par défaut */
+    box-sizing: border-box; /* Inclut la bordure et le padding dans la taille totale des éléments */
+}
+
 /* Début codage CSS du Header--------------------------------------------------------------*/
 
 /* Header */
-    header {
-        display: flex; /* Utiliser Flexbox pour aligner le contenu */
-        justify-content: space-between; /* Espacement entre logo et barre de recherche */
-        align-items: center; /* Centrer verticalement les éléments */
-        padding: 10px 20px; /* Espacement interne du header */
-        background-color : #f0f0f0; /* Couleur de fond du header */
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;  
+header {
+    display: flex; /* Utiliser Flexbox pour aligner le contenu */
+    justify-content: space-between; /* Espacement entre logo et barre de recherche */
+    align-items: center; /* Centrer verticalement les éléments */
+    padding: 10px 20px; /* Espacement interne du header */
+    background-color : #f0f0f0; /* Couleur de fond du header */
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;  
+}
 
+/* 2_ Mise en forme du logo*/
+.image2 {
+    display: flex; /* Utilise flexbox pour centrer l'image */
+    justify-content: center; /* Centre l'image horizontalement */
+    align-items: center; /* Centre l'image verticalement */
+    height: 120px; /* Définit la hauteur de l'image */
+    border-radius: 10px; /* Arrondit les coins de l'image */
     }
 
-    /* 2_ Mise en forme du logo*/
-    .image2 {
-        display: flex; /* Utilise flexbox pour centrer l'image */
-        justify-content: center; /* Centre l'image horizontalement */
-        align-items: center; /* Centre l'image verticalement */
-        height: 120px; /* Définit la hauteur de l'image */
-        border-radius: 10px; /* Arrondit les coins de l'image */
-        }
-    
 
-    /* Style du bouton */
-    .dropbtn {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
+/* 3_ Styles pour le bouton d'ouverture "Se connecter / S inscrire" */
+.search-button1 {
+    padding: 10px 15px; /* Espace intérieur pour rendre le bouton plus grand */
+    background-color: rgb(230, 220, 212); /* Couleur de fond du bouton */
+    color: RGB(146, 174, 201); /* Couleur du texte du bouton */
+    font-size: 20px; /* Taille de la police pour le texte du bouton */
+    border-radius: 4px; /* Arrondit légèrement les coins du bouton */
+    border: none; /* Supprime la bordure du bouton */
+    box-shadow: 1px 1px 1px black;
+    cursor: pointer; /* Change le curseur en main lors du survol */
+}
+
+.search-button1:hover,
+.search-button2:hover {
+    background-color: RGB(146, 174, 201); /* Change la couleur de fond au survol */
+    color: white; /* Change la couleur du texte au survol */
+}
+
+/* 4_ Styles pour le conteneur de la fenêtre modale */
+.reservation-container,.overlay {
+    display: none; /* Cachée par défaut */
+    position: fixed; /* Fixe la position par rapport à la fenêtre */
+    top: 50%; /* Centre verticalement */
+    left: 50%; /* Centre horizontalement */
+    transform: translate(-50%, -50%); /* Ajuste le centrage */
+    z-index: 1000; /* Priorité d'affichage */
+}
+
+.reservation-container {
+    background-color: #f0f0f0; /* Fond de la modale */
+    border: 1px solid #ccc; /* Bordure grise */
+    padding: 20px; /* Espacement interne */
+    width: 300px; /* Largeur fixe */
+    border-radius: 4px; /* Coins arrondis */
+}
+
+.overlay {
+    width: 100%; /* Prend toute la largeur de la fenêtre */
+    height: 100%; /* Prend toute la hauteur de la fenêtre */
+    background-color: rgba(0, 0, 0, 0.5); /* Fond noir semi-transparent */
+    z-index: 999; /* Priorité d'affichage sous la modale */
+}
+
+/* Container pour chaque champ de formulaire */
+
+.password-container {
+display: flex;
+align-items: center;
+gap: 4px; /* Réduit l'espace entre l'input et le bouton */
+}
+
+.password-container input {
+width: 200px; /* Ajustez la taille de l'input selon vos préférences */
+}
+
+.form-fields label {
+display: block;
+width: 100%; /* Toute la largeur du formulaire */
+text-align: left;
+margin-bottom: 5px;
+font-size: 17px;
+}
+
+.phone-container {
+display: flex;
+align-items: center;
+gap: 10px; /* Espacement entre l'indicatif et le numéro */
+width: 100%; /* Prend toute la largeur disponible */
+}
+
+#register-phone-indicative {
+width: 90px; /* Ajuste la largeur de l'indicatif */
+height: 40px; /* Hauteur commune pour une bonne alignement */
+padding: 5px;
+font-size: 16px;
+text-align: center;
+border: 1px solid #ccc;
+border-radius: 5px;
+}
+
+#register-phone {
+flex: 1; /* Prend toute la largeur restante */
+height: 40px; /* Hauteur commune */
+padding: 5px;
+font-size: 16px;
+border: 1px solid #ccc;
+border-radius: 5px;
+margin-top: 16px;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+}
+
+/* Styles pour les éléments du formulaire dans .reservation-container */
+.reservation-container label {
+
+    display: block; /* Définit chaque <label> comme un élément de bloc, ce qui le fait occuper toute la largeur de son conteneur parent */
+    width: 100%; /* Définit la largeur du <label> à 100% de son conteneur parent */
+    text-align: left; /* Aligne le texte à gauche dans chaque <label> */
+    margin-bottom: 5px; /* Ajoute un espace de 5 pixels sous chaque <label> pour séparer visuellement les éléments */
+    font-size: 17px; /* Police du text du <label>*/
+}
+
+.reservation-container input {
+    width: 100%; /* Définit la largeur de l'élément <input> pour qu'il occupe toute la largeur du conteneur parent */
+    padding: 4px; /* Ajoute un espacement intérieur de 8 pixels autour du texte à l'intérieur de l'élément <input> */
+    margin-bottom: 15px; /* Ajoute un espace de 15 pixels sous chaque élément <input> pour créer un espacement entre les champs */
+    border: 1px solid #ccc; /* Applique une bordure grise de 1 pixel autour de l'élément <input> */
+    border-radius: 5px; /* Arrondit les coins de l'élément <input> avec un rayon de 5 pixels */
+    font-size: 15px;
+}
+
+/* Bouton de fermeture de la modale */
+.create-account, .forgot-password, .btn-submit {
+    margin-top: 15px; /* Espace au-dessus */
+    padding: 10px; /* Espacement interne */
+    width: 100%; /* Largeur de 100% */
+    border-radius: 4px; /* Coins arrondis */
+    cursor: pointer; /* Curseur de clic */
+    font-size: 15px; /* Taille de la police */
+}
+
+.forgot-password, .create-account {
+    background-color: #00ccff; /* Couleur de fond */
+    color: white; /* Couleur du texte */
+    border: none; /* Pas de bordure */
+}    
+
+.close-modal {
+    cursor: pointer; /* Change le curseur en main */
+    font-size: 24px; /* Taille de la police pour le symbole de fermeture */
+    color: #333; /* Couleur du symbole de fermeture */
+    position: absolute; /* Position absolue par rapport à la modale */
+    top: 10px; /* Distance par rapport au haut de la modale */
+    right: 10px; /* Distance par rapport au côté droit de la modale */
+}
+
+.close-modal:hover {
+    color: red; /* Change la couleur au survol pour indiquer une action */
+}
+
+/* Debut du codage bouton rechercher-------------------------------------------------*/
+.reservation-container2 {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+}
+
+/* Liste des suggestions */
+.suggestions-list {
+list-style: none; /* Enlève les puces (bullet points) de la liste */
+margin: 0; /* Enlève toute marge extérieure de la liste */
+padding: 0; /* Enlève tout padding (espacement intérieur) de la liste */
+position: absolute; /* Positionne la liste de manière absolue par rapport à son parent (permet de la superposer à d'autres éléments) */
+background-color: white; /* Définit la couleur de fond de la liste en blanc */
+max-height: 150px; /* Limite la hauteur maximale de la liste à 150px */
+overflow-y: auto; /* Ajoute une barre de défilement verticale si le contenu dépasse la hauteur maximale */
+width: 220px; /* Définit la largeur de la liste à 220px */
+z-index: 10; /* Définit l'ordre de superposition (les éléments avec un z-index plus élevé seront affichés au-dessus des autres) */
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajoute une ombre légère autour de la liste pour lui donner un effet de profondeur */
+}
+
+/* Style des éléments de suggestion */
+.suggestions-list li {
+padding: 8px 10px; /* Ajoute un espacement intérieur (padding) de 8px en haut et en bas, 10px à gauche et à droite pour chaque élément de la liste */
+cursor: pointer; /* Change le curseur de la souris en main (pointer) lorsque l'on survole un élément de la liste */
+transition: background-color 0.2s ease-in-out; /* Ajoute une transition fluide au changement de couleur de fond (background-color) sur 0.2 seconde */
+}
+
+/* État au survol d'un élément de la liste */
+.suggestions-list li:hover {
+background-color: #f0f0f0; /* Change la couleur de fond de l'élément au survol (hover) en gris clair (#f0f0f0) */
+}
+
+/* Différenciation par type : style des éléments avec la classe "continent" */
+.suggestions-list li.continent {
+color: #3498db; /* Définit la couleur du texte en bleu (#3498db) pour les éléments de type "continent" */
+font-weight: bold; /* Rend le texte en gras pour les éléments de type "continent" */
+}
+
+/* Différenciation par type : style des éléments avec la classe "country" */
+.suggestions-list li.country {
+color: #2ecc71; /* Définit la couleur du texte en vert (#2ecc71) pour les éléments de type "country" */
+}
+
+/* Différenciation par type : style des éléments avec la classe "city" */
+.suggestions-list li.city {
+color: #e74c3c; /* Définit la couleur du texte en rouge (#e74c3c) pour les éléments de type "city" */
+}
+
+.search-button2 {
+padding: 10px; /* Espace intérieur pour rendre le bouton plus grand */
+background-color : #f0f0f0; /* Couleur de fond du header */
+color: RGB(146, 174, 201); /* Couleur du texte du bouton */
+font-size:15px;
+border: 4px solid RGB(146, 174, 201); /* Bordure du champ de saisie */
+text-align: center;
+font-weight:bold;
+border-radius: 0px 4px 4px 0px;
+cursor: pointer !important; /* Change le curseur en main lors du survol */
+}
+
+/* 📌 Correction et harmonisation des champs de recherche */
+.search-input3, .search-input4, .search-input5 {
+padding: 10px; /* Espacement interne */
+font-size: 15px; /* Taille de la police */
+background-color: rgb(230, 220, 212); /* Couleur de fond */
+color: RGB(146, 174, 201); /* Couleur du texte */
+border: 4px solid RGB(146, 174, 201) !important; /* Bordure identique au bouton avec !important */
+width: 220px; /* Taille unifiée */
+margin: 0; /* Supprime les marges indésirables */
+outline: none; /* Supprime l'effet de focus par défaut */
+}
+
+/* 🎨 Assurer un alignement correct */
+.search-fields-container {
+display: flex; 
+flex-direction: row; 
+align-items: center;
+gap: 0; /* Pas d'espace entre les champs */
+}
+
+/* 🛠️ Ajustement des arrondis pour coller les champs */
+.search-input3 {
+border-radius: 4px 0 0 4px !important; /* Arrondi à gauche */
+}
+
+.search-input4 {
+border-radius: 0 !important; /* Pas d’arrondi pour un alignement parfait */
+width: 245px !important;
+}
+
+.search-input5 {
+border-radius: 0 !important; /* Pas d’arrondi intermédiaire */
+width: 275px !important;
+}
+
+.search-button2 {
+border-radius: 0px 4px 4px 0px; /* Arrondi à droite */
+}
+
+/* 🌟 Effet au survol */
+.search-input3:hover, .search-input4:hover, .search-input5:hover, .search-button2:hover {
+cursor: text;
+background-color: rgba(230, 220, 212, 0.9); /* Légère variation au survol */
+}
+
+
+/* Style du champs nb voyageurs et nb chambres */
+.dropdown-content {
+display: none; /* Masquer le menu déroulant par défaut. Il est caché jusqu'à ce qu'on interagisse avec le champ de saisie */
+position: absolute; /* Permet au menu déroulant d'être positionné indépendamment dans la page (pas dans le flux normal du document) */
+background-color: white; /* Définir la couleur de fond du menu déroulant à blanc */
+min-width: 250px; /* Définit une largeur minimale pour le menu déroulant de 250px */
+border: 1px solid #ddd; /* Ajouter une bordure de couleur gris clair autour du menu déroulant */
+padding: 10px; /* Ajoute un espacement interne autour du contenu du menu déroulant */
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Ajoute une ombre portée sous le menu pour lui donner un effet flottant */
+z-index: 1; /* Définit l'ordre d'empilement des éléments. Avec z-index: 1, ce menu sera affiché au-dessus des autres éléments ayant un z-index plus bas ou aucun */
+}
+
+/* Afficher le menu déroulant lorsqu'on clique sur le champ de saisie */
+.search-input5:focus + .dropdown-content {
+display: block; /* Lorsque l'élément avec la classe 'search-input5' reçoit le focus (l'utilisateur clique dessus), on affiche le dropdown (en changeant le display de 'none' à 'block') */
+}
+
+.dropdown-content.show {
+display: block !important;
+}
+
+/* Style des éléments 'label' dans le dropdown */
+.dropdown-content label {
+display: block; /* Chaque label sera un élément de bloc (il occupe toute la largeur disponible) */
+margin: 10px 0 5px; /* Ajoute une marge autour des labels : 10px en haut et 5px en bas pour espacer les éléments du dropdown */
+}
+
+/* Style des éléments 'select' et 'input' dans le dropdown */
+.dropdown-content select,
+.dropdown-content input {
+width: 100%; /* Donne à ces éléments une largeur de 100% pour qu'ils prennent toute la largeur disponible du dropdown */
+padding: 5px; /* Ajoute un espacement interne autour du texte ou des options pour améliorer l'apparence et la lisibilité */
+margin-bottom: 10px; /* Ajoute une marge en bas de ces éléments pour les espacer des autres éléments du dropdown */
+}
+
+/* Style du champ de saisie pour "Nombre de personnes" */
+#peopleInput {
+cursor: pointer; /* Change le curseur de la souris en une main lorsque l'utilisateur survole l'élément, ce qui indique qu'il est cliquable */
+}
+
+
+
+
+
+
+/* Style du bouton pour modifier la langue */
+.dropbtn {
+    background-color: #4CAF50; /* Définit la couleur de fond du bouton en vert */
+    color: white; /* Définit la couleur du texte en blanc */
+    padding: 10px; /* Ajoute un espacement interne autour du texte */
+    border: none; /* Supprime les bordures du bouton */
+    border-radius: 4px; /* Arrondir les coins à droite */
+    cursor: pointer; /* Affiche un curseur de type "main" au survol */
+    box-shadow: 1px 1px 1px black ;
+}
+
+/* Conteneur de la liste déroulante */
+.dropdown {
+    margin-right: 50px;
+    position: relative; /* Positionne le conteneur de façon relative pour placer le contenu de la liste en dessous */
+    display: inline-block; /* Aligne le conteneur avec d'autres éléments en ligne */
+}
+
+/* Contenu de la liste déroulante */
+.dropdown-content {
+    display: none; /* Masque la liste déroulante par défaut */
+    position: absolute; /* Positionne la liste par rapport au conteneur parent */
+    background-color: #f9f9f9; /* Définit la couleur de fond de la liste */
+    min-width: 160px; /* Définit une largeur minimale pour la liste */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Applique une ombre sous la liste */
+    z-index: 1; /* Place la liste au-dessus des autres éléments */
+}
+
+.dropdown-content a {
+    color: black; /* Définit la couleur du texte des liens en noir */
+    padding: 12px 16px; /* Ajoute un espacement interne aux liens */
+    text-decoration: none; /* Supprime la décoration du texte des liens */
+    display: block; /* Affiche chaque lien comme un bloc */
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1; /* Change la couleur de fond au survol pour un effet visuel */
+}
+
+/* Afficher la liste au clic */
+.show {
+    display: block; /* Affiche la liste déroulante lorsqu'elle est activée */
+}
+
+/* Fin du codage CSS du Header--------------------------------------------------------------*/
+/* */
+
+
+/* Debut du codage du bandeau avec les boutons--------------------------------------------- */
+.button-bar {
+    display: flex;
+    justify-content: center; /* Centre les boutons */
+    background-color: #f0f0f0; /* Couleur de fond du bandeau */
+    padding: 10px 0; /* Espacement vertical du bandeau */
+    border-top: 2px solid #ccc; /* Bordure au-dessus du bandeau */
+    position : sticky; /* Fixer la barre de navigation lorsqu on scroll */
+    top : 0; /* La barre de navigation reste en haut */
+}
+
+.nav-button {
+    padding: 10px 20px; /* Espace intérieur pour agrandir les boutons */
+    margin: 0 10px; /* Espace horizontal entre les boutons */
+    background-color: rgb(230, 220, 212); /* Couleur de fond des boutons */
+    color: #333; /* Couleur du texte des boutons */
+    border: none; /* Supprime la bordure des boutons */
+    border-radius: 10px; /* Coins arrondis pour les boutons */
+    box-shadow: 1px 1px 1px black;
+    font-weight: bold; /* Texte en gras */
+    cursor: pointer; /* Change le curseur en main lors du survol */
+    font-size: 13px; /* Taille de la police des boutons */
+    text-decoration: none; 
+}
+
+.nav-button:hover {
+    background-color: RGB(146, 174, 201); /* Change la couleur au survol */
+    color: white; /* Change la couleur du texte au survol */
+}
+
+/* Fin du codage du bandeau avec les boutons--------------------------------------------- */
+
+
+/* Debut du codage de l image en arriere plan et des écritures--------------------------- */
+
+/* Styles pour l'arrière-plan */
+.background-image {
+    background-image: url("../Image/destinationreve4.jpg");
+    background-size: cover; /* L'image couvre toute la largeur */
+    background-position: center; /* Centre l'image */
+    flex-direction: column; /* Aligne le contenu en colonne */
+    height: 50vh; /* Hauteur de l'arrière-plan */
+    display: flex; /* Pour centrer le contenu si nécessaire */
+    align-items: center; /* Centre verticalement le contenu */
+    justify-content: center; /* Centre horizontalement le contenu */
+    color: white; /* Couleur du texte */
+    text-shadow: 2px 2px 2px rgba(1, 1, 1, 1); /* Ombre pour le texte */
+    text-align: center; /* Centre le texte */
+}
+
+h1 {
+    margin-top: 20vh; /* Marge haute pour ajuster la position du titre */
+    font-size: 3em; /* Taille de la police pour le titre */
     }
 
-    /* Style du menu déroulant */
-    .dropdown {
-        position: relative;
-        display: inline-block;
+
+.p1 {
+    font-size: 1.5em; /* Taille de la police pour le paragraphe */
+    margin:0; /* Supprime la marge par défaut */
     }
 
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #f9f9f9;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-        border-radius: 5px;
-        padding: 10px;
-    }
+/* Fin du codage de l image en arriere plan et des écritures--------------------------------------------- */
 
-    /* Style des sections dans le menu */
-    .dropdown-section {
-        margin-bottom: 10px;
-    }
+/* Debut du codage FOOTER--------------------------------------------------------------------------------- */
+footer {
+    padding: 20px; /* Espace intérieur autour du footer */
+    background-color : #f0f0f0; /* Couleur de fond du header */
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
 
-    .dropdown-section strong {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
+h3 {
+    margin-bottom: 10px;
+}
 
-    .dropdown-content a {
-        color: black;
-        padding: 8px 12px;
-        text-decoration: none;
-        display: block;
-        border-radius: 3px;
-    }
+/* Conteneur principal de contenu dans le pied de page */
+.footer-content {
+    display: flex; /* Utilise Flexbox pour aligner les éléments enfants horizontalement */
+    justify-content: space-around; /* Espacement égal autour de chaque div */
+    flex-wrap: wrap; /* Permet aux divs de passer à la ligne si l'espace horizontal est insuffisant */
+    margin-bottom: 10px; /* Espace en bas du conteneur pour séparer du contenu suivant */
+}
 
-    .dropdown-content a:hover {
-        background-color: #f1f1f1;
-    }
+/* Styles pour chaque section individuelle à l'intérieur du pied de page */
+.footer-content div {
+    flex: 1; /* Permet à chaque div de s'étirer également */
+    min-width: 200px; /* Assure que chaque div a une largeur minimale de 200px */
+    margin: 10px; /* Ajoute un espacement autour de chaque div */
+}
 
-    /* Afficher le menu au clic */
-    .show {
-        display: block;
-    }
+.search-form6 {
+    display: flex; /* Aligne le champ et le bouton en ligne */
+}
+
+.search-input6 {
+    padding: 10px; /* Espacement interne du champ de saisie */
+    font-size: 15px;
+    border: 1px solid #ccc; /* Bordure du champ de saisie */
+    border-radius: 4px 0 0 4px; /* Arrondir les coins à gauche */
+    outline: none; /* Enlève le contour par défaut */
+}
+
+.search-button6:hover {
+    background-color: RGB(146, 174, 201);
+    color: white;
+}
+
+.search-button6 {
+    padding: 10px 15px; /* Espacement interne du bouton */
+    border: 1px solid #ccc; /* Bordure du bouton */
+    border-left: none; /* Enlève la bordure à gauche pour un effet uniforme */
+    background-color: rgb(230, 220, 212) ; /* Couleur de fond du bouton */
+    color: RGB(146, 174, 201);
+    font-size: 15px;
+    font-weight: bold; /* Couleur du texte */
+    border-radius: 0 4px 4px 0; /* Arrondir les coins à droite */
+    cursor: pointer; /* Change le curseur lors du survol */
+}
+
+/* Conteneur pour le bas du pied de page */
+.footer-bottom {
+    text-align: left; /* Aligne le texte à gauche */
+    font-size: 0.9em; /* Taille de police légèrement réduite */
+    color: #333; /* Couleur de texte */
+    padding-top: 10px; /* Espacement en haut pour séparer de la section précédente */
+    border-top: 1px solid #ccc; /* Ajoute une ligne de séparation en haut */
+}
+/* Fin du codage FOOTER--------------------------------------------------------------------------------- */
+
+/* Rendre le site web responsive-------------------------------------------------------------------------*/
+
+/* Responsivité pour les grands écrans */
+.button-mobile {
+    display:none;
+}
+
+@media (max-width: 1024px) {
+.background-image {
+    height: 40vh; /* Hauteur réduite de l'image */
+}
+
+.button-bar {
+    display: none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:0;
+    transition:all 0.3s ease;
+    background-color:rgba(0, 0, 0, 0.5); /*rgba pour gerer l opacite */
+}
+
+.button-bar.open {
+    display:block;
+    height:100vh;
+}
+
+.button-mobile {
+    display:block;
+}
+}
+
+/* Responsivité pour les écrans moyens */
+@media (max-width: 768px) {
+header, .footer-content, .button-bar {
+    flex-direction: column; /* Aligne les éléments en colonne */
+    align-items: center; /* Centre le contenu */
+}
+
+.button-bar {
+    padding: 5px; /* Réduit le padding du bandeau */
+}
+
+.nav-button {
+    font-size: 11px; /* Réduit la taille des boutons */
+    margin: 5px 0; /* Espace vertical entre les boutons */
+    padding: 8px 15px; /* Réduit l'espace intérieur */
+}
+
+.search-button1 {
+    font-size: 18px; /* Taille de police réduite */
+}
+
+h1 {
+    font-size: 2em; /* Taille de police réduite pour le titre */
+}
+
+.p1 {
+    font-size: 1.2em; /* Taille de police réduite pour le texte */
+}
+}
+
+/* Responsivité pour les petits écrans */
+@media (max-width: 480px) {
+header {
+    flex-direction: column; /* Aligne les éléments en colonne */
+    padding: 5px 10px; /* Réduit le padding */
+}
+
+.background-image {
+    height: 30vh; /* Hauteur réduite de l'image */
+}
+
+.nav-button {
+    font-size: 10px; /* Taille de police réduite pour les boutons */
+    padding: 6px 10px; /* Moins d'espace intérieur */
+}
+
+.search-button1 {
+    font-size: 16px; /* Réduit la taille de la police */
+    padding: 8px 10px; /* Réduit le padding */
+}
+
+h1 {
+    font-size: 1.5em; /* Taille de police réduite pour le titre */
+}
+
+.p1 {
+    font-size: 1em; /* Taille de police réduite pour le texte */
+}
+
+.footer-content {
+    align-items: center; /* Centre le contenu */
+    text-align: center; /* Centre le texte */
+}
+}
+
+
+
+/* CSS POUR RESERVATIONS.HTML */
+
+.reservation-container3 {
+    width: 70%;
+    background: white;
+    padding: 30px;
+    padding-top: 0px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: left; /* Aligne le texte à gauche */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Aligne les éléments en haut */
+}
+
+.hotel-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* S'assure que les éléments commencent en haut */
+    width: 100%;
+}
+
+.hotel-image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.hotel-equipments, .hotel-description {
+    width: 100%;
+    text-align: left; /* Assure que tout est bien aligné à gauche */
+}
+
+.equipments-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    text-align: left;
+    margin-top: 10px;
+}
+
+.equipment-item {
+    display: flex;
+    align-items: center;
+}
+
+.equipment-item span {
+    margin-left: 10px;
+}

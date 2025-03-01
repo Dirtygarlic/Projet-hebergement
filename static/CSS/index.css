@@ -7,7 +7,6 @@
         box-sizing: border-box; /* Inclut la bordure et le padding dans la taille totale des éléments */
     }
 
-    
 /* Début codage CSS du Header--------------------------------------------------------------*/
 
 /* Header */
@@ -181,8 +180,6 @@
         height: 60px;
    }
 
- /* Liste des suggestions */
-/* Liste des suggestions */
 /* Liste des suggestions */
 .suggestions-list {
     list-style: none; /* Enlève les puces (bullet points) de la liste */
@@ -229,40 +226,59 @@
     padding: 10px; /* Espace intérieur pour rendre le bouton plus grand */
     background-color : #f0f0f0; /* Couleur de fond du header */
     color: RGB(146, 174, 201); /* Couleur du texte du bouton */
-    text-align: center;
     font-size:15px;
+    border: 4px solid RGB(146, 174, 201); /* Bordure du champ de saisie */
+    text-align: center;
     font-weight:bold;
-    border: 4px solid RGB(146, 174, 201); /* Bordure du champ de saisie */
     border-radius: 0px 4px 4px 0px;
-    cursor: pointer; /* Change le curseur en main lors du survol */
+    cursor: pointer !important; /* Change le curseur en main lors du survol */
 }
 
+/* 📌 Correction et harmonisation des champs de recherche */
 .search-input3, .search-input4, .search-input5 {
-    padding: 10px; /* Espacement interne du champ de saisie */
+    padding: 10px; /* Espacement interne */
     font-size: 15px; /* Taille de la police */
-    border: 4px solid RGB(146, 174, 201); /* Bordure du champ de saisie */
-    background-color: rgb(230, 220, 212) ; /* Couleur de fond du bouton */
-    color: RGB(146, 174, 201);
-    width: 220px;
-    margin:0;
+    background-color: rgb(230, 220, 212); /* Couleur de fond */
+    color: RGB(146, 174, 201); /* Couleur du texte */
+    border: 4px solid RGB(146, 174, 201) !important; /* Bordure identique au bouton avec !important */
+    width: 220px; /* Taille unifiée */
+    margin: 0; /* Supprime les marges indésirables */
+    outline: none; /* Supprime l'effet de focus par défaut */
 }
 
+/* 🎨 Assurer un alignement correct */
+.search-fields-container {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+    gap: 0; /* Pas d'espace entre les champs */
+}
+
+/* 🛠️ Ajustement des arrondis pour coller les champs */
 .search-input3 {
-    border-radius: 4px 0px 0px 4px;
-} 
-
-.search-input4, .search-input5 {
-    width:250px;
+    border-radius: 4px 0 0 4px !important; /* Arrondi à gauche */
 }
 
-.search-button2:hover {
-    background-color: RGB(146, 174, 201); /* Change la couleur de fond au survol */
-    color: white; /* Change la couleur du texte au survol */
+.search-input4 {
+    border-radius: 0 !important; /* Pas d’arrondi pour un alignement parfait */
+    width: 245px !important;
 }
 
-.search-input3:hover, .search-input4:hover, .search-input5:hover {
+.search-input5 {
+    border-radius: 0 !important; /* Pas d’arrondi intermédiaire */
+    width: 275px !important;
+}
+
+.search-button2 {
+    border-radius: 0px 4px 4px 0px; /* Arrondi à droite */
+}
+
+/* 🌟 Effet au survol */
+.search-input3:hover, .search-input4:hover, .search-input5:hover, .search-button2:hover {
     cursor: text;
+    background-color: rgba(230, 220, 212, 0.9); /* Légère variation au survol */
 }
+
 
 /* Style du champs nb voyageurs et nb chambres */
 .dropdown-content {
@@ -279,6 +295,10 @@
 /* Afficher le menu déroulant lorsqu'on clique sur le champ de saisie */
 .search-input5:focus + .dropdown-content {
     display: block; /* Lorsque l'élément avec la classe 'search-input5' reçoit le focus (l'utilisateur clique dessus), on affiche le dropdown (en changeant le display de 'none' à 'block') */
+}
+
+.dropdown-content.show {
+    display: block !important;
 }
 
 /* Style des éléments 'label' dans le dropdown */
@@ -390,7 +410,7 @@
 
 /* Styles pour l'arrière-plan */
     .background-image {
-        background-image: url('/Users/remylenne/Desktop/Projet2/Frontend/Image/destinationreve4.tinypng.jpeg'); /* Remplacez par le chemin de votre image */
+        background-image: url("../Image/destinationreve4.jpg");
         background-size: cover; /* L'image couvre toute la largeur */
         background-position: center; /* Centre l'image */
         flex-direction: column; /* Aligne le contenu en colonne */
@@ -484,14 +504,33 @@
 /* Rendre le site web responsive-------------------------------------------------------------------------*/
 
 /* Responsivité pour les grands écrans */
-@media (max-width: 1024px) {
+    .button-mobile {
+        display:none;
+    }
+
+    @media (max-width: 1024px) {
     .background-image {
         height: 40vh; /* Hauteur réduite de l'image */
     }
 
-    .nav-button {
-        font-size: 12px; /* Réduit la taille de la police des boutons */
-        padding: 8px 15px; /* Réduit l'espace intérieur */
+    .button-bar {
+        display: none;
+        position:fixed;
+        top:0;
+        left:0;
+        width:100%;
+        height:0;
+        transition:all 0.3s ease;
+        background-color:rgba(0, 0, 0, 0.5); /*rgba pour gerer l opacite */
+    }
+    
+    .button-bar.open {
+        display:block;
+        height:100vh;
+    }
+
+    .button-mobile {
+        display:block;
     }
 }
 
@@ -559,3 +598,334 @@
         text-align: center; /* Centre le texte */
     }
 }
+
+/* CSS POUR LES FILTRES HOTELS SUR HOTEL.HTML
+
+/* 🌍 Style général */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* 📌 Conteneur principal (FILTRES + HÔTELS) */
+.content-container {
+    display: flex; /* Affichage horizontal */
+    align-items: flex-start; /* Aligner le haut des éléments */
+    gap: 20px; /* Espacement entre filtres et résultats */
+    padding: 20px;
+}
+
+/* 🎛️ Style de la barre des filtres */
+.filters-sidebar {
+    width: 25%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ddd;
+}
+
+/* 🏷️ Titre et nombre d'hôtels */
+.filters-sidebar h2 {
+    font-size: 22px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#hotel-count {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+/* 🔍 Style des boîtes de filtres */
+.filter-box {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+    border-left: 5px solid RGB(146, 174, 201);
+}
+
+/* 🏷️ Titres des filtres */
+.filter-box h3 {
+    font-size: 18px;
+    color: #333;
+    border-bottom: 2px solid RGB(146, 174, 201);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+/* 📌 Checkboxes et labels */
+.filter-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.filter-item label {
+    font-size: 16px;
+    color: #555;
+    cursor: pointer;
+}
+
+.filter-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #3498db;
+    margin-right: 10px;
+}
+
+/* 📌 Champs de saisie */
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* 🔘 Boutons */
+#reset-filters {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+/* 🏨 Conteneur des hôtels (à droite) */
+.hotels-container {
+    width: 75%; /* Largeur des résultats */
+}
+
+/* 🏨 Liste des hôtels en GRID - 1 hôtel par ligne */
+#hotels-list {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 seule colonne */
+    gap: 20px; /* Espacement entre les hôtels */
+}
+
+/* 🎨 Style des cartes hôtels */
+.hotel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    background-color: #fff;
+    height: 200px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Effet d'ombre pour un look moderne */
+    transition: transform 0.2s ease-in-out; /* Effet au survol */
+}
+
+/* 🔥 Effet au survol */
+.hotel:hover {
+    transform: scale(1.02); /* Agrandit légèrement l'hôtel */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 📋 Conteneur des informations de l'hôtel */
+.hotel-info {
+    flex: 1; /* Prend 1 part sur 3 */
+    padding-right: 15px;
+}
+
+/* 🏨 Titre de l'hôtel */
+.hotel-info h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* 🌍 Ville et prix */
+.hotel-info p {
+    font-size: 16px;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* 💰 Prix en couleur */
+.hotel-info p strong {
+    color: #2c3e50; /* Bleu foncé */
+}
+
+/* ⭐ Style des étoiles */
+.hotel-info h2 span {
+    color: gold; /* Étoiles dorées */
+}
+
+.equipements {
+    font-size: 0.9em;  /* Réduit la taille du texte */
+    font-style: italic; /* Met en italique */
+    color: #555; /* Change légèrement la couleur */
+}
+
+/* 📸 Conteneur de l'image */
+.hotel-img-container {
+    flex: 2; /* Prend 2 parts sur 3 */
+    height: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+/* 🖼️ Image ajustée */
+.hotel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.hotel-action {
+    flex: 0.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.reserve-button {
+    background-color : #f0f0f0; /* Couleur de fond du header */
+    color: RGB(146, 174, 201); /* Couleur du texte du bouton */
+    font-size: 16px;
+    font-weight: bold;
+    border: 4px solid RGB(146, 174, 201); /* Bordure du champ de saisie */
+    border-radius: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.reserve-button:hover {
+    background-color: rgba(230, 220, 212, 0.9);
+}
+
+/* 📌 Responsive Design : Mobile */
+@media (max-width: 768px) {
+    .content-container2 {
+        flex-direction: column; /* Affichage vertical sur mobile */
+    }
+
+    .filters-sidebar {
+        width: 100%;
+    }
+
+    .hotels-container {
+        width: 100%; /* Prend toute la largeur sur mobile */
+    }
+}
+
+/* CSS POUR RESERVATIONS.HTML */
+
+/* 🌍 Conteneur principal */
+.layout-container {
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    background-color: #f5f5f5; /* Même couleur que le header */
+    padding: 20px;
+}
+
+/* 🏨 Bloc Hôtel & Carte */
+.hotel-info-container, .map-container {
+    flex: 1;
+    max-width: 50%;
+    padding: 20px;
+    background-color: #f9f9f9; /* Même couleur que les boutons du nav */
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ddd;
+    color: RGB(146, 174, 201); /* Texte harmonisé */
+}
+
+/* ✅ Titre de l'hôtel */
+.hotel-info-container h1 {
+    color: RGB(146, 174, 201);
+    text-align: left;  /* ✅ Assure l'alignement à gauche */
+    margin: 0;         /* ✅ Supprime les marges inutiles */
+    padding-top: 0;    /* ✅ Supprime tout espace en haut */
+}
+
+
+/* 📸 Image de l'hôtel */
+.hotel-image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* 📍 Adresse */
+.hotel-address {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: RGB(146, 174, 201);
+}
+
+/* 🏨 Équipements et description */
+.hotel-equipments, .hotel-description {
+    color: #333;
+    margin-top: 20px; /* ✅ Ajoute un espace au-dessus */
+    padding-top: 10px; /* ✅ Ajoute un peu d’espace intérieur */
+    border-top: 2px solid rgba(146, 174, 201, 0.5); /* ✅ Optionnel : Séparateur subtil */
+}
+
+
+/* ✅ Grille des équipements */
+.equipments-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    text-align: left;
+    margin-top: 10px;
+}
+
+/* ⭐ Étoiles */
+.hotel-stars {
+    font-size: 18px;
+    color: gold;
+    white-space: nowrap;
+}
+
+/* ✅ Carte Leaflet */
+#hotel-map {
+    width: 100%;
+    height: 500px;
+    border-radius: 10px;
+}
+
+/* 🎨 Effet hover */
+.map-container:hover {
+    transform: scale(1.02); /* Agrandit légèrement l'hôtel */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ✅ Responsive */
+@media (max-width: 1024px) {
+    .layout-container {
+        flex-direction: column;
+    }
+
+    .map-container, .hotel-info-container {
+        max-width: 100%;
+    }
+}
+
+
+
+
+
+
+
+

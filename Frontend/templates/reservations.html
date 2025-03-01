@@ -6,21 +6,23 @@
         <meta name="keywords" content="booking, reservation, motel, hotel, car, voiture, boat, bateau, restaurant, flight, vols"> <!-- je ne sais pas trop quoi mettre ici -->
         <meta name="description" content="JustDreams — Trouvez l'hébergement Idéal sur JustDreams.com, le Plus Grand Site de Voyages au Monde. Des Réservations Faciles, Rapides, Sécurisées et Sans Frais, et un Tarif Garanti. Motels.">  
         <title> JustDreams - Réservez votre prochain voyage  </title>
-        <link rel="stylesheet" href="/Users/remylenne/Desktop/Projet2/Frontend/TestProjet/testprojetrecherche.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='CSS/index.css') }}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <link href="/Users/remylenne/Desktop/Projet2/static/JS/bootstrap.min.js" rel="stylesheet">
-        <link rel="icon" href="/Users/remylenne/Desktop/Projet2/Frontend/Image/JustDreams.ico" type="image/x-icon">
+        <!-- <link href="/Users/remylenne/Desktop/Projet2/static/JS/bootstrap.min.js" rel="stylesheet"> -->
+        <link rel="icon" href="{{ url_for('static', filename='Image/JustDreamslogo.ico') }}" type="image/x-icon">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
    </head>
 
    <body>
         <!-- En-tête du site -->
         <header> 
             <div>
-                <img src="/Users/remylenne/Desktop/Projet2/Frontend/Image/JustDreamslogo.jpg" alt="Logo du site JustDreams" class="image2">
+                <img src="{{ url_for('static', filename='Image/JustDreamslogo.jpg') }}" alt="Logo JustDreams" class="image2">
            </div>
 
-            <button type="button" id="loginButton" class="search-button1" onclick="toggleLoginForm()">Se connecter / S'inscrire</button>
+           <button type="button" id="loginButton" class="search-button1" onclick="toggleLoginForm()">Se connecter / S'inscrire</button>
 
             <div id="overlay" class="overlay"></div>
 
@@ -101,45 +103,47 @@
            
             <!-- Barre de recherche avec suggestions -->
             <div class="reservation-container2">
-               <!-- <form id="search-form" action="/recherche" method="POST"> PROBLEME CSS AVEC LE FORMULAIRE-->
-                    <!-- Lieu avec suggestions -->
-                    <div class="autoComplete">
-                        <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves?" onkeyup="autoComplete(this.value)">
-                        <ul id="suggestions" class="suggestions-list"></ul>
-                    </div>
-
-                    <!-- Date d'arrivée et date de départ -->
-                    <div class="date-picker-container">
-                        <input type="text" id="date-range" name="date_range" class="search-input4" placeholder="Date d'arrivée - Date de départ" readonly>
-                    </div>
-
-                    <!-- Nombre de personnes (adultes, enfants) -->
-                    <button id="openFormBtn">Sélectionner les détails</button>
-
-                    <!-- Modal de sélection -->
-                    <div id="personnesForm" class="modal">
-                      <div class="modal-content">
-                        <span class="closeBtn">&times;</span>
-                        <h3>Choisissez vos détails</h3>
-                        
-                        <label for="personnes">Nombre de personnes :</label>
-                        <input type="number" id="personnes" name="personnes" min="1" required>
-                    
-                        <label for="enfants">Nombre d'enfants :</label>
-                        <input type="number" id="enfants" name="enfants" min="0" value="0">
-                    
-                        <label for="animaux">Voyage avec un animal de compagnie :</label>
-                        <input type="checkbox" id="animaux" name="animaux">
-                    
-                        <button id="submitBtn">Valider</button>
-                      </div>
-                    </div>
-                    
-
-                    <!-- Bouton de recherche -->
-                    <input type="submit" class="search-button2" value="Rechercher">
-               <!-- </form> PROBLEME CSS AVEC LE FORMULAIRE-->
-            </div>
+                <form id="search-form" action="/recherche" method="POST">
+                     <div class="search-fields-container">
+                         <!-- Lieu avec suggestions -->
+                         <div class="autoComplete">
+                             <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves?" onkeyup="autoComplete(this.value)">
+                             <ul id="suggestions" class="suggestions-list"></ul>
+                         </div>
+ 
+                         <!-- Date d'arrivée et date de départ -->
+                         <div class="date-picker-container">
+                             <input type="text" id="date-range" name="date_range" class="search-input4" placeholder="Date d'arrivée - Date de départ" readonly>
+                         </div>
+ 
+                         <!-- Nombre de personnes (adultes, enfants) -->
+                         <div class="people-selector">
+                             <input type="text" id="peopleInput" placeholder="2 adultes - 0 enfant - Animaux ?" class="search-input5" >
+                             <div id="peopleDropdown" class="dropdown-content">
+                                 <label for="adults">Nombre d'adultes :</label>
+                                 <select id="adults" name="adults">
+                                     <option value="1">1</option>
+                                     <option value="2">2</option>
+                                     <option value="3">3</option>
+                                     <option value="4">4</option>
+                                 </select>
+ 
+                                 <label for="children">Nombre d'enfants :</label>
+                                 <select id="children" name="children">
+                                     <option value="0">0</option>
+                                     <option value="1">1</option>
+                                     <option value="2">2</option>
+                                 </select>
+ 
+                                 <label for="pets">Voyage avec un animal de compagnie ?</label>
+                                 <input type="checkbox" id="pets" name="pets"> Oui
+                             </div>
+                         </div>
+                     <!-- Bouton de recherche -->
+                         <input type="submit" class="search-button2" value="Rechercher">
+                     </div>
+                 </form>
+             </div>
 
             <!-- choix de la langue-->
             <div class="dropdown">
@@ -157,10 +161,10 @@
                     <a href="#" onclick="changeLanguage('ur')">اُردُو (Urdū)</a>
                 </div>
             </div>
-
         </header>
-        <!--fin de l en-tête du site-->
-        <!-- Bandeau qui sert à inserer plusieurs boutons -->
+
+        <button class="button-mobile"> menu </button>
+        
         <nav class="button-bar">
             <a href = "presentation.html" class="nav-button" target="_blank">Notre rêve</a>
             <a href = "hotels.html" class="nav-button" target="_blank">Hôtels</a>
@@ -174,54 +178,55 @@
             <a href = "contact.html" class="nav-button" target="_blank">Contact</a>
         </nav>
 
-        <!-- Insertion d'un arriere plan grâce à une div -->
-        <div class="background-image">
-            <h1>Bienvenue sur Just Dreams</h1>
-                <p class="p1">Vivez vos rêves</p>
-        </div>
-
-        <footer>
-            <div class="footer-content">
-                <div class="contact-info">
-                    <h3>Contact</h3>
-                    <p class="p2"><strong>Adresse :</strong> 777 Rue du Paradis, Paris, France</p>
-                    <p class="p2"><strong>Téléphone :</strong> +33 1 23 45 67 89</p>
-                    <p class="p2"><strong>Email :</strong> justdreams06@gmail.com</p>
+        <main class="reservation-container3">
+            <div class="layout-container">
+                <!-- 🏨 Bloc pour les détails de l'hôtel -->
+                <div class="hotel-info-container">
+                    <div class="hotel-card">
+                        <!-- ✅ Titre et étoiles -->
+                        <div class="hotel-header">
+                            <h1 id="hotel-title"></h1>
+                            <span class="hotel-stars" id="hotel-stars"></span>
+                        </div>
+        
+                        <!-- ✅ Adresse -->
+                        <p class="hotel-address" id="hotel-address"></p>
+        
+                        <!-- ✅ Image -->
+                        <div class="hotel-image-container">
+                            <img id="hotel-image" src="" alt="Photo de l'hôtel">
+                        </div>
+        
+                        <!-- ✅ Équipements -->
+                        <div class="hotel-equipments">
+                            <h3>Équipements</h3>
+                            <div id="hotel-equipments-list" class="equipments-grid"></div>
+                        </div>
+        
+                        <!-- ✅ Description -->
+                        <div class="hotel-description">
+                            <h3>Description</h3>
+                            <p><strong></strong> <span id="hotel-description"></span></p>
+                        </div>
+                    </div>
                 </div>
-    
-                <div class="useful-links">
-                    <h3>Liens Utiles</h3>
-                    <ul>
-                        <li><a href="/mentions-legales">Mentions légales</a></li>
-                        <li><a href="/politique-de-confidentialite">Politique de confidentialité</a></li>
-                        <li><a href="/cgv">Conditions Générales de Vente</a></li>
-                    </ul>
-                </div>
-    
-                <div class="social-media">
-                    <h3>Suivez-nous</h3>
-                    <ul>
-                        <li><a href="https://www.facebook.com" target="_blank">Facebook</a></li>
-                        <li><a href="https://www.twitter.com" target="_blank">Twitter</a></li>
-                        <li><a href="https://www.instagram.com" target="_blank">Instagram</a></li>
-                        <li><a href="https://www.linkedin.com" target="_blank">LinkedIn</a></li>
-                    </ul>
-                </div>
-    
-                <div class="newsletter">
-                    <h3>Inscrivez-vous à notre Newsletter</h3>
-                    <form action="/subscribe" method="post" class="search-form6">
-                        <input type="email" placeholder="Votre email" class="search-input6" required>
-                        <button type="submit" class= "search-button6">S'inscrire</button>
-                    </form>
+                 <!-- 📌 Bloc pour la carte -->
+                <div class="map-container">
+                    <h2>📍 Localisation de l'hôtel</h2>
+                    <div id="hotel-map"></div>
                 </div>
             </div>
-            
-             <div class="footer-bottom">
-            <p class="p3">&copy; 2024 JustDreams. Tous droits réservés.</p>
-            </div>
+        </main>
+        
+        <footer class="footer-content">
+            <p>&copy; 2025 JustDreams. Tous droits réservés.</p>
         </footer>
-        <script src="/Users/remylenne/Desktop/Projet2/Frontend/TestProjet/testprojetrecherche.js" defer></script>
+
+        <!-- <script src="{{ url_for('static', filename='JS/index.js') }}" defer></script> -->
+        <script src="{{ url_for('static', filename='JS/reservations.js') }}" defer></script>
+       <!-- <script src="{{ url_for('static', filename='JS/hotel.js') }}" defer></script> -->
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     </body>
 </html>
