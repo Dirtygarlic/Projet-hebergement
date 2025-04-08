@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="keywords" content="booking, reservation, motel, hotel, car, voiture, boat, bateau, restaurant, flight, vols"> <!-- je ne sais pas trop quoi mettre ici -->
+        <meta name="keywords" content="réservation, voyage, hôtel, vol, voiture, bateau, restaurant, JustDreams, séjour, vacances">
         <meta name="description" content="JustDreams — Trouvez l'hébergement Idéal sur JustDreams.com, le Plus Grand Site de Voyages au Monde. Des Réservations Faciles, Rapides, Sécurisées et Sans Frais, et un Tarif Garanti. Motels.">  
         <title> JustDreams - Réservez votre prochain voyage  </title>
         <link rel="stylesheet" href="{{ url_for('static', filename='CSS/index.css') }}">
@@ -22,31 +22,43 @@
 
            <button type="button" id="loginButton" class="search-button1" onclick="toggleLoginForm()">Se connecter / S'inscrire</button>
 
-            <div id="overlay" class="overlay"></div>
+            <!-- Menu utilisateur (affiché dynamiquement si connecté) -->
+            <div id="user-menu-container" style="display: none;">
+            <button id="user-menu-button">👤 Mon compte</button>
+            <div id="user-dropdown" class="hidden">
+                <p id="user-fullname">Remy Lenne</p>
+                <a href="/mes-reservations">📄 Mes réservations</a>
+                <a href="#" id="logout-link">🚪 Déconnexion</a>
+            </div>
+            </div>
 
-            <div id="loginForm" class="reservation-container">
-                <div class="close-modal" onclick="toggleLoginForm()">&times;</div>
-                <h2 id="form-title">Se connecter / S'inscrire</h2>
+           <div id="overlay" class="overlay"></div>
 
-                <form id="userForm">
-                    <!-- Champs de formulaire pour la connexion -->
-                    <div id="loginFields" class="form-fields">
+           <div id="loginModal" class="reservation-container">
+               <div class="close-modal" onclick="toggleLoginForm()">&times;</div>
+               <h2 id="form-title">Se connecter / S'inscrire</h2>
+
+               <!-- 🟢 Formulaire de Connexion -->
+               <form id="loginForm" class="form-fields active">
+                    <div id="loginFields">
                         <label for="login-email">Email:</label>
                         <input type="email" id="login-email" name="email" required>
-
+            
                         <label for="login-password">Mot de passe:</label>
                         <div class="password-container">
                             <input type="password" id="login-password" name="password" required>
                             <button type="button" onclick="togglePasswordVisibility('login-password')">👁</button>
                         </div>
-
-                        <button type="submit" class="btn-submit" onclick="submitLogin(event)">Se connecter</button>
-                        <button type="button" class="forgot-password" onclick="resetPassword()">Mot de passe oublié ?</button>
+            
+                        <button type="submit" class="btn-submit">Se connecter</button>
+                        <button type="button" id="forgot-password-button" class="forgot-password">Mot de passe oublié ?</button>
                         <button type="button" class="create-account" onclick="switchToCreateAccount()">Créer un compte</button>
                     </div>
+                </form>
 
-                    <!-- Champs de formulaire pour l'inscription -->
-                    <div id="registerFields" class="form-fields" style="display: none;">
+                <!-- 🟢 Formulaire d'inscription -->
+                <form id="registerForm" style="display: none;">
+                    <div id="registerFields" class="form-fields">
                         <label for="register-name">Nom complet:</label>
                         <input type="text" id="register-name" name="name" required>
 
@@ -77,23 +89,33 @@
                             <input type="tel" id="register-phone" name="phone" placeholder="Numéro de téléphone" required>
                         </div>
                         <p id="phone-error" class="error-message" style="display: none;">Chiffres uniquement</p>
-
+                        <p id="email-error" class="error-message" style="display: none;">Adresse email invalide</p>
                         <label for="register-email">Email:</label>
                         <input type="email" id="register-email" name="email" required>
-
+            
                         <label for="register-password">Mot de passe:</label>
                         <div class="password-container">
                             <input type="password" id="register-password" name="password" required>
                             <button type="button" onclick="togglePasswordVisibility('register-password')">👁</button>
                         </div>
-
+            
+                        <small id="password-strength-text" class="error-message hidden"></small>
+            
+                        <ul id="password-criteria" class="password-criteria hidden">
+                            <li id="length" class="invalid">❌ Minimum 8 caractères</li>
+                            <li id="uppercase" class="invalid">❌ Une lettre majuscule</li>
+                            <li id="lowercase" class="invalid">❌ Une lettre minuscule</li>
+                            <li id="digit" class="invalid">❌ Un chiffre</li>
+                            <li id="special" class="invalid">❌ Un caractère spécial</li>
+                        </ul>
+            
                         <label for="confirm-password">Confirmer le mot de passe:</label>
                         <div class="password-container">
                             <input type="password" id="confirm-password" name="confirmPassword" required>
                             <button type="button" onclick="togglePasswordVisibility('confirm-password')">👁</button>
                         </div>
-
-                        <button type="button" class="btn-submit" onclick="submitRegister(event)">Valider</button>
+            
+                        <button type="submit" class="btn-submit" id="register-submit" disabled>Valider</button>
                         <button type="button" class="create-account" onclick="switchToLogin()">Se connecter</button>
                     </div>
                 </form>
@@ -105,8 +127,8 @@
                      <div class="search-fields-container">
                          <!-- Lieu avec suggestions -->
                          <div class="autoComplete">
-                             <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves?" onkeyup="autoComplete(this.value)">
-                             <ul id="suggestions" class="suggestions-list"></ul>
+                            <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves?">
+                            <ul id="suggestions-global" class="suggestions-list"></ul>
                          </div>
  
                          <!-- Date d'arrivée et date de départ -->
@@ -117,7 +139,7 @@
                          <!-- Nombre de personnes (adultes, enfants) -->
                          <div class="people-selector">
                              <input type="text" id="peopleInput" placeholder="2 adultes - 0 enfant - Animaux ?" class="search-input5" >
-                             <div id="peopleDropdown" class="dropdown-content">
+                             <div id="peopleDropdown" class="dropdown-travel-content">
                                  <label for="adults">Nombre d'adultes :</label>
                                  <select id="adults" name="adults">
                                      <option value="1">1</option>
@@ -146,7 +168,7 @@
             <!-- choix de la langue-->
             <div class="dropdown">
                 <button onclick="toggleDropdown()" class="dropbtn">Langue</button>
-                <div id="languageDropdown" class="dropdown-content">
+                <div id="languageDropdown" class="dropdown-lang-content">
                     <a href="#" onclick="changeLanguage('fr')">Français</a>
                     <a href="#" onclick="changeLanguage('en')">English</a>
                     <a href="#" onclick="changeLanguage('es')">Español</a>
@@ -166,18 +188,18 @@
         <button class="button-mobile"> menu </button>
 
         <nav class="button-bar">
-            <a href = "presentation.html" class="nav-button" target="_blank">Notre rêve</a>
-            <a href = "hotels.html" class="nav-button" target="_blank">Hôtels</a>
-            <a href = "vols.html" class="nav-button" target="_blank">Vols</a>
-            <a href = "hotels et vols.html" class="nav-button" target="_blank">Hôtels + Vols</a>
-            <a href = "voitures.html" class="nav-button" target="_blank">Voitures</a>
-            <a href = "restaurants.html" class="nav-button" target="_blank">Restaurants</a>
-            <a href = "bateaux.html" class="nav-button" target="_blank">Bateaux</a>
-            <a href = "promotions.html" class="nav-button" target="_blank">Promotions</a>
-            <a href = "meilleurs avis.html" class="nav-button" target="_blank">Les meilleurs avis</a>
-            <a href = "contact.html" class="nav-button" target="_blank">Contact</a>
+            <a href="presentation.html" class="nav-button" target="_blank">Notre rêve</a>
+            <a href="hotel" class="nav-button" target="_blank">Hôtels</a>
+            <a href="hotel" class="nav-button" target="_blank">Vols</a>
+            <a href="hotel" class="nav-button" target="_blank">Hôtels + Vols</a>
+            <a href="hotel" class="nav-button" target="_blank">Voitures</a>
+            <a href="hotel" class="nav-button" target="_blank">Restaurants</a>
+            <a href="hotel" class="nav-button" target="_blank">Bateaux</a>
+            <a href="hotel" class="nav-button" target="_blank">Promotions</a>
+            <a href="meilleurs avis.html" class="nav-button" target="_blank">Les meilleurs avis</a>
+            <a href="contact.html" class="nav-button" target="_blank">Contact</a>
         </nav>
-
+        
         <!-- Insertion d'un arriere plan grâce à une div -->
         <div class="background-image">
             <h1>Bienvenue sur Just Dreams</h1>
@@ -215,9 +237,9 @@
                 <div class="newsletter">
                     <h3>Inscrivez-vous à notre Newsletter</h3>
                     <form action="/subscribe" method="post" class="search-form6">
-                        <input type="email" placeholder="Votre email" class="search-input6" required>
+                        <input type="email" name="email" placeholder="Votre email" class="search-input6" required>
                         <button type="submit" class= "search-button6">S'inscrire</button>
-                    </form> 
+                    </form>
                 </div>
             </div>
             
@@ -225,9 +247,15 @@
             <p class="p3">&copy; 2024 JustDreams. Tous droits réservés.</p>
             </div>
         </footer>
-        <script src="{{ url_for('static', filename='JS/index.js') }}" defer></script>
-        <script src="{{ url_for('static', filename='JS/indexFiltreHotel.js') }}" defer></script>
+        
+         <!-- 🌐 Flatpickr pour les calendriers -->
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+
+        <!-- 🧠 Scripts internes de ton application -->
+        <script type="module" src="{{ url_for('static', filename='JS/authentification/authUISetup.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='JS/newsletter.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='JS/filters/noHotelGlobalFilters.js') }}"></script>
+
     </body>
 </html>

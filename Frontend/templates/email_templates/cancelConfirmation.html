@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Annulation de votre réservation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/cancelConfirmation.css') }}">
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://justdreams.fr/static/Image/JustDreamslogo.jpg" alt="Logo JustDreams">
+            <h2>Votre réservation a été annulée ❌</h2>
+        </div>
+
+        <div class="content">
+            <p>Bonjour <span class="highlight">{{ first_name }}</span>,</p>
+
+            <p>Nous confirmons l'annulation de votre réservation à l'hôtel :</p>
+
+            <p class="reservation-details">
+                🏨 <span class="highlight">{{ hotel_name }}</span><br>
+                📅 Du <span class="highlight">{{ checkin }}</span> au <span class="highlight">{{ checkout }}</span><br>
+                👥 Nombre de voyageurs : <span class="highlight">{{ guests }}</span><br>
+                💰 Montant initial : <span class="highlight">{{ total_price }} €</span><br>
+                📆 Annulé le : <span class="highlight">{{ cancelled_at }}</span>
+            </p>
+
+            <p>Nous espérons vous revoir bientôt sur <strong>JustDreams</strong> ✨</p>
+
+            <p>Si vous n’êtes pas à l’origine de cette annulation, contactez immédiatement notre service client.</p>
+        </div>
+
+        <div class="footer">
+            <p>JustDreams – Réalisez vos rêves de voyage ✈️</p>
+            <p><a href="mailto:support@justdreams06.com">support@justdreams06.com</a></p>
+        </div>
+    </div>
+</body>
+</html>

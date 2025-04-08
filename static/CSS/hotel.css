@@ -1,0 +1,906 @@
+/* ===================================================== */
+/* 🌐 FICHIER : hotel.css - STRUCTURE PAR SECTION HTML  */
+/* ===================================================== */
+
+/* ----------------------------- */
+/* 🎨 PARAMÈTRES GÉNÉRAUX */
+/* ----------------------------- */
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+/* ===================================================== */
+/* 🔝 1. HEADER (Logo + Connexion /inscription + Langue) */
+/* ===================================================== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+}
+
+/* 🖼️ Logo */
+.image2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+    border-radius: 10px;
+}
+
+/* 🔐 Bouton : Se connecter / S'inscrire */
+.search-button1 {
+    padding: 10px 15px;
+    background-color: rgb(230, 220, 212);
+    color: rgb(146, 174, 201);
+    font-size: 20px;
+    border-radius: 4px;
+    border: none;
+    box-shadow: 1px 1px 1px black;
+    cursor: pointer;
+}
+
+/* 🎯 Effet au survol des boutons */
+.search-button1:hover,
+.search-button2:hover {
+    background-color: rgb(146, 174, 201);
+    color: white;
+}
+
+#user-menu-container {
+    position: relative;
+    display: inline-block;
+}
+  
+#user-menu-button {
+background-color: #f0f0f0;
+border: none;
+padding: 10px;
+font-weight: bold;
+cursor: pointer;
+}
+
+#user-dropdown {
+position: absolute;
+right: 0;
+background-color: white;
+border: 1px solid #ccc;
+padding: 10px;
+min-width: 180px;
+box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+z-index: 1000;
+}
+
+#user-dropdown a {
+display: block;
+text-decoration: none;
+padding: 8px;
+color: black;
+}
+
+#user-dropdown a:hover {
+background-color: #f5f5f5;
+}
+
+.hidden {
+display: none;
+}
+
+.avatar-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 6px;
+    vertical-align: middle;
+}  
+
+/* 🌐 Bouton de sélection de langue */
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px black;
+}
+
+/* 📂 Conteneur dropdown langue */
+.dropdown {
+    margin-right: 50px;
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-lang-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* 📎 Liens du dropdown */
+.dropdown-lang-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-lang-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* 🔽 Affichage conditionnel */
+.show {
+    display: block;
+}
+
+
+/* ===================================================== */
+/* 📋 2. MODALES (Connexion / Inscription)              */
+/* ===================================================== */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+
+.reservation-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 20px;
+    width: 300px;
+    border-radius: 4px;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.overlay.active,
+.reservation-container.active {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: red;
+}
+
+/* 💡 Transition douce entre les formulaires */
+.form-fields {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+}
+
+.form-fields.active {
+    opacity: 1;
+    pointer-events: auto;
+    position: relative;
+}
+
+/* ✍️ Style des champs de formulaire */
+.reservation-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 17px;
+    text-align: left;
+    width: 100%;
+}
+
+.reservation-container input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+.hidden {
+    display: none;
+}
+
+.password-container {
+display: flex;
+align-items: center;
+gap: 4px; /* Réduit l'espace entre l'input et le bouton */
+}
+
+.password-container input {
+width: 200px; /* Ajustez la taille de l'input selon vos préférences */
+}
+
+.password-criteria .valid {
+    color: green;
+}
+
+.password-criteria .invalid {
+    color: red;
+}
+
+#password-criteria {
+    margin-bottom: 15px !important; /* ajoute un petit espace avant le champ suivant */
+}
+
+.password-criteria {
+    list-style: none;
+    padding-left: 0;
+    font-size: 0.9em;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+input.password-weak {
+    background-color: #ffe6e6; /* rouge pâle */
+}
+
+input.password-medium {
+    background-color: #fff3cd; /* jaune clair */
+}
+
+input.password-strong {
+    background-color: #d4edda; /* vert pâle */
+}
+
+input[type="password"] {
+    transition: background-color 0.3s ease;
+}
+
+.form-fields label {
+display: block;
+width: 100%; /* Toute la largeur du formulaire */
+text-align: left;
+margin-bottom: 5px;
+font-size: 17px;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 4px;
+}
+
+.phone-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+#register-phone-indicative {
+    width: 90px;
+    height: 40px;
+    padding: 5px;
+    font-size: 16px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#register-phone {
+    flex: 1;
+    height: 40px;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 16px;
+}
+
+input.invalid {
+    border: 2px solid #e74c3c;
+    background-color: #fff6f6;
+}
+
+/* 📩 Boutons du formulaire */
+.create-account, .forgot-password, .btn-submit {
+    margin-top: 15px;
+    padding: 10px;
+    width: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.forgot-password, .create-account {
+    background-color: #00ccff;
+    color: white;
+    border: none;
+}
+
+.btn-submit:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+
+/* ===================================================== */
+/* 🔍 3. BARRE DE RECHERCHE                             */
+/* ===================================================== */
+.reservation-container2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+}
+
+.search-fields-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+}
+
+.search-input3, .search-input4, .search-input5 {
+    padding: 10px; /* Espacement interne */
+    font-size: 15px; /* Taille de la police */
+    background-color: rgb(230, 220, 212); /* Couleur de fond */
+    color: RGB(146, 174, 201); /* Couleur du texte */
+    border: 4px solid RGB(146, 174, 201) !important; /* Bordure identique au bouton avec !important */
+    width: 220px; /* Taille unifiée */
+    margin: 0; /* Supprime les marges indésirables */
+    outline: none; /* Supprime l'effet de focus par défaut */
+}
+
+.search-input3 {
+    border-radius: 4px 0 0 4px !important;
+}
+
+.search-input4 {
+    border-radius: 0 !important;
+    width: 245px !important;
+}
+
+.search-input5 {
+    border-radius: 0 !important;
+    width: 275px !important;
+}
+
+.search-button2 {
+    padding: 10px; /* Espace intérieur pour rendre le bouton plus grand */
+    background-color : #f0f0f0; /* Couleur de fond du header */
+    color: RGB(146, 174, 201); /* Couleur du texte du bouton */
+    font-size:15px;
+    border: 4px solid RGB(146, 174, 201); /* Bordure du champ de saisie */
+    text-align: center;
+    font-weight:bold;
+    border-radius: 0px 4px 4px 0px;
+    cursor: pointer !important; /* Change le curseur en main lors du survol */
+}
+
+.search-input3:hover,
+.search-input4:hover,
+.search-input5:hover,
+.search-button2:hover {
+    cursor:text;
+    background-color: rgba(230, 220, 212, 0.9);
+}
+
+.suggestions-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    background-color: white;
+    max-height: 150px;
+    overflow-y: auto;
+    width: 220px;
+    z-index: 999;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.suggestions-list li {
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.suggestions-list li:hover {
+    background-color: #f0f0f0;
+}
+
+.suggestions-list li.continent {
+    color: #3498db;
+    font-weight: bold;
+}
+
+.suggestions-list li.country {
+    color: #2ecc71;
+}
+
+.suggestions-list li.city {
+    color: #e74c3c;
+}
+
+.dropdown-travel-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 250px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1002;
+}
+
+.search-input5:focus + .dropdown-travel-content,
+.dropdown-travel-content.show {
+    display: block !important;
+}
+
+.dropdown-travel-content label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.dropdown-travel-content select,
+.dropdown-travel-content input {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+#peopleInput {
+    cursor: pointer;
+}
+
+#user-menu-button {
+    font-size: 1.5em; /* ou essaie 2em ou 24px */
+    padding: 8px 12px;
+}
+
+
+/* ===================================================== */
+/* 🧭 4. NAVIGATION (Bandeau de boutons)                */
+/* ===================================================== */
+.button-bar {
+    display: flex;
+    justify-content: center;
+    background-color: #f0f0f0;
+    padding: 10px 0;
+    border-top: 2px solid #ccc;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+
+.nav-button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    background-color: rgb(230, 220, 212);
+    color: #333;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px black;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.nav-button:hover {
+    background-color: rgb(146, 174, 201);
+    color: white;
+}
+
+/* 🍔 Bouton burger (mobile) */
+.button-mobile {
+    display: none;
+}
+
+/* ===================================================== */
+/* 🦶 5. FOOTER                                          */
+/* ===================================================== */
+footer {
+    padding: 20px;
+    background-color: #f0f0f0;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+/* Conteneur principal du footer */
+.footer-content {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+/* Chaque section à l'intérieur du footer */
+.footer-content div {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+}
+
+h3 {
+    margin-bottom: 10px;
+}
+
+/* Formulaire d’inscription à la newsletter ou champ de recherche */
+.search-form6 {
+    display: flex;
+}
+
+.search-input6 {
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+}
+
+.search-button6 {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-left: none;
+    background-color: rgb(230, 220, 212);
+    color: rgb(146, 174, 201);
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+.search-button6:hover {
+    background-color: rgb(146, 174, 201);
+    color: white;
+}
+
+/* Bas du pied de page */
+.footer-bottom {
+    text-align: left;
+    font-size: 0.9em;
+    color: #333;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+}
+
+
+/* ===================================================== */
+/* 🏨 6. PAGE HOTEL (Filtres + Liste Hôtels)            */
+/* ===================================================== */
+
+/* ----------------------------- */
+/* 🧰 6.1 CONTENEUR GLOBAL */
+/* ----------------------------- */
+
+.content-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* ----------------------------- */
+/* 🎛️ 6.2 BARRE DE FILTRES (GAUCHE) */
+/* ----------------------------- */
+
+.filters-sidebar {
+    width: 25%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ddd;
+}
+
+.filters-sidebar h2 {
+    font-size: 22px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#hotel-count {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.filter-box {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+    border-left: 5px solid RGB(146, 174, 201);
+}
+
+.filter-box h3 {
+    font-size: 18px;
+    color: #333;
+    border-bottom: 2px solid RGB(146, 174, 201);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.filter-item label {
+    font-size: 16px;
+    color: #555;
+    cursor: pointer;
+}
+
+.filter-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #3498db;
+    margin-right: 10px;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#search-filters, #reset-filters {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+/* ----------------------------- */
+/* 🏨 6.3 CONTENEUR HÔTELS (DROITE) */
+/* ----------------------------- */
+
+.hotels-container {
+    width: 75%;
+}
+
+#hotels-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.hotel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    background-color: #fff;
+    height: 200px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.hotel:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.hotel-info {
+    flex: 1;
+    padding-right: 15px;
+}
+
+.hotel-info h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.hotel-info p {
+    font-size: 16px;
+    color: #555;
+    margin: 5px 0;
+}
+
+.hotel-info p strong {
+    color: #2c3e50;
+}
+
+.hotel-info h2 span {
+    color: gold;
+}
+
+.equipements {
+    font-size: 0.9em;
+    font-style: italic;
+    color: #555;
+}
+
+.hotel-img-container {
+    flex: 2;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.hotel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.hotel-action {
+    flex: 0.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.reserve-button {
+    background-color: #f0f0f0;
+    color: RGB(146, 174, 201);
+    font-size: 16px;
+    font-weight: bold;
+    border: 4px solid RGB(146, 174, 201);
+    border-radius: 4px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.reserve-button:hover {
+    background-color: rgba(230, 220, 212, 0.9);
+}
+
+
+/* ===================================================== */
+/* 📱 7. RESPONSIVE DESIGN (mobile/tablette)             */
+/* ===================================================== */
+/* -------- 📐 Grands écrans jusqu'à 1024px -------- */
+@media (max-width: 1024px) {
+    .background-image {
+        height: 40vh;
+    }
+
+    .button-bar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0;
+        transition: all 0.3s ease;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .button-bar.open {
+        display: block;
+        height: 100vh;
+    }
+
+    .button-mobile {
+        display: block;
+    }
+}
+
+/* -------- 🖥️ Moyens écrans jusqu'à 768px -------- */
+@media (max-width: 768px) {
+    header,
+    .footer-content,
+    .button-bar {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .button-bar {
+        padding: 5px;
+    }
+
+    .nav-button {
+        font-size: 11px;
+        margin: 5px 0;
+        padding: 8px 15px;
+    }
+
+    .search-button1 {
+        font-size: 18px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    .p1 {
+        font-size: 1.2em;
+    }
+
+    .content-container {
+        flex-direction: column;
+    }
+
+    .filters-sidebar {
+        width: 100%;
+    }
+
+    .hotels-container {
+        width: 100%;
+    }
+}
+
+/* -------- 📱 Petits écrans jusqu'à 480px -------- */
+@media (max-width: 480px) {
+    header {
+        flex-direction: column;
+        padding: 5px 10px;
+    }
+
+    .background-image {
+        height: 30vh;
+    }
+
+    .nav-button {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+
+    .search-button1 {
+        font-size: 16px;
+        padding: 8px 10px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    .p1 {
+        font-size: 1em;
+    }
+
+    .footer-content {
+        align-items: center;
+        text-align: center;
+    }
+
+    .button-mobile {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+}

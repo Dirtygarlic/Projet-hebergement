@@ -1,6 +1,67 @@
-let isGlobalSearchActive = false;
+// =======================================
+// 📑 hotel.js - Gestion des hôtels, filtres, et recherche
+// =======================================
+// Ce fichier est le point d’entrée principal pour la page d’exploration des hôtels.
+// Il orchestre :
+// - le chargement initial des hôtels,
+// - la recherche via la barre globale,
+// - l’application de filtres spécifiques,
+// - l’affichage dynamique des résultats,
+// - le reset des filtres,
+// - et l’autocomplétion du champ destination.
+//
+// Toutes les responsabilités sont réparties dans des modules spécialisés du dossier `filters/`. 🧩
 
-// Creation d un dictionnaire d icones pour les equipements
+/*
+JS/
+├── hotel.js                   # Point d’entrée de la page Hôtels
+└── filters/                   # Modules spécialisés pour filtrage et affichage
+    ├── hotelApi.js            # 📡 Appels API (fetchHotels, fetchFilteredHotels)
+    ├── hotelAutoComplete.js   # 🔠 Autocomplétion sur la ville
+    ├── hotelCleanFilters.js   # 🧼 Nettoyage & validation des filtres
+    ├── hotelGlobalFilters.js  # 📋 Extraction des champs du formulaire principal
+    ├── hotelSpecificFilters.js# 🔍 Extraction des champs dans les filtres spécifiques
+    ├── hotelRender.js         # 🏨 Rendu des hôtels dans la page (HTML)
+    └── hotelReview.js         # ⭐ (facultatif) Gestion des avis si nécessaire
+*/
+
+/*
+📚 Table des matières :
+1. 📦 Importations des modules
+2. 🔧 Variables globales
+3. 🧩 Icônes équipements
+4. 📅 Initialisation du calendrier
+5. 📡 Soumission du formulaire de recherche
+6. 🔎 Filtres spécifiques / URL
+7. 🧼 Réinitialisation des filtres
+8. 🚀 Initialisation DOM
+*/
+
+
+// ============================
+// 1. 📦 Importations des modules
+// ============================
+import { getSpecificFilters } from './filters/hotelSpecificFilters.js';
+import { getGlobalFiltersFromForm } from './filters/hotelGlobalFilters.js';
+import { cleanFilters } from './filters/hotelCleanFilters.js';
+import { fetchHotels, fetchFilteredHotels, fetchAllHotels } from './filters/hotelApi.js';
+import { renderHotelsWithReviews } from './filters/hotelRender.js';
+import { autoComplete } from './filters/hotelAutoComplete.js';
+import { checkLoginOnLoad } from './authentification/sessionManager.js';
+
+
+// ============================
+// 2. 🔧 Variables globales
+// ============================
+let isGlobalSearchActive = false;
+let isFilterProcessing = false;
+let fetchAllHotelsTimeout = null;
+let isFiltering = false;
+
+
+// ============================
+// 3. 🧩 Icônes pour les équipements
+// ============================
 const equipmentIcons = {
     "Parking": "🚗",
     "Restaurant": "🍽️",
@@ -16,7 +77,10 @@ const equipmentIcons = {
     "Kitchenette": "🍳"
 };
 
-// 🔄 Initialisation de Flatpickr pour la sélection des dates
+
+// ============================
+// 4. 📅 Initialisation du calendrier
+// ============================
 flatpickr.localize(flatpickr.l10ns.fr);
 
 if (typeof flatpickr !== "undefined") {
@@ -30,145 +94,29 @@ if (typeof flatpickr !== "undefined") {
     console.error("Flatpickr n'est pas chargé correctement.");
 }
 
-// 🔹 Variable pour éviter de recharger les hôtels après un filtrage
-let isFiltering = false;
 
-// 🎨 Fonction pour afficher les hôtels dans la page
-function renderHotels(hotels) {
-    const container = document.getElementById("hotels-list"); // L'élément qui contient les résultats
-    container.innerHTML = '';
-
-    // ✅ Gestion du compteur d'hôtels
-    const countElement = document.getElementById("hotel-count"); // Assure-toi que cet élément existe
-    if (countElement) {
-        countElement.innerHTML = hotels.length > 0
-            ? `<strong style="color: green;">Nombre d'hôtels trouvés : ${hotels.length}</strong>`
-            : `<strong style="color: red;">Aucun hôtel trouvé</strong>`;
-    }
-
-    if (hotels.length === 0) {
-        container.innerHTML = `
-            <div class="alert text-center d-flex flex-column align-items-center justify-content-center" role="alert" 
-                 style="color: red; font-weight: bold; min-height: 300px; display: flex; flex-direction: column; text-align: center;">
-                <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3JmdTVrem5seG9iZTR3bnIzNDE1NjVnM2dzdnBlOWRlcXZnM3NibSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/UC0bLicVsCTnhtGaBq/giphy.gif" 
-                     alt="Désolé" 
-                     style="width: 500px; height: auto; margin-bottom: 10px;">
-                <br>OUPS ! Veuillez modifier votre recherche.
-            </div>`;
-        return;
-    }       
-
-    hotels.forEach(hotel => {
-        const hotelDiv = document.createElement('div');
-        hotelDiv.className = 'hotel col-lg-12 d-flex align-items-center border p-3 mb-3';
-
-         // 🔍 Ajout du log pour vérifier les valeurs avant redirection
-        console.log("🔍 Hôtel sélectionné avant redirection :", {
-            name: hotel.name,
-            address: hotel.address,
-            description: hotel.description
-        });
-
-        const reservationLink = `/reservations?name=${encodeURIComponent(hotel.name)}`
-        + `&stars=${hotel.stars}`
-        + `&rating=${encodeURIComponent(hotel.hotel_rating || "N/A")}`
-        + `&equipments=${encodeURIComponent(hotel.equipments?.join(", ") || "Aucun équipement")}`
-        + `&price=${hotel.price_per_night}`
-        + `&image=${encodeURIComponent(hotel.image || "/static/Image/default.jpg")}`
-        + `&address=${encodeURIComponent(hotel.address && hotel.address !== "null" ? hotel.address : "Adresse inconnue")}`
-        + `&description=${encodeURIComponent(hotel.description && hotel.description !== "null" ? hotel.description : "Aucune description disponible")}`
-        + `&lat=${hotel.latitude || ""}`  // 🔹 Ajout des coordonnées latitude
-        + `&lng=${hotel.longitude || ""}`; // 🔹 Ajout des coordonnées longitude
-
-        hotelDiv.innerHTML = `
-            <div class="hotel-info">
-                <h2>${hotel.name} <span>${'⭐'.repeat(hotel.stars)}</span></h2>
-                <p><strong>Lieu :</strong> ${hotel.city}, ${hotel.country || ""}</p>
-                <p><strong>Prix :</strong> <span style="color: #e74c3c; font-weight: bold;">${hotel.price_per_night} € / nuit</span></p>
-                <p><strong>Note :</strong> <span style="color: #27ae60; font-weight: bold;">${hotel.hotel_rating || "N/A"}</span></p>
-                <p><strong>Équipements :</strong> ${hotel.equipments?.join(", ") || "Aucun équipement"}</p>
-            </div>
-            <div class="hotel-img-container">
-                <img src="${hotel.image || "/static/Image/default.jpg"}" 
-                class="img-fluid rounded mb-2" 
-                style="max-height: 200px; width: 100%; object-fit: cover;">
-            </div>
-            <div class="hotel-action">
-                <a href="${reservationLink}" class="reserve-button" onclick="redirectToReservation(${hotel.id})">Réserver</a>
-            </div>
-        `;
-        container.appendChild(hotelDiv);
-    });
-}
-
-// 📡 Récupération de tous les hôtels au chargement de la page
-async function fetchAllHotels() {
-    if (isFiltering) return;
-
-    console.log("🔄 Chargement de tous les hôtels...");
-
-    try {
-        const response = await fetch('/hotels');
-        if (!response.ok) throw new Error(`Erreur: ${response.statusText}`);
-
-        const hotels = await response.json();
-        console.log("✅ Hôtels chargés :", hotels);
-        renderHotels(hotels);
-    } catch (error) {
-        console.error('❌ Erreur lors de la récupération des hôtels :', error);
-    }
-}
-
-// 📡 Récupération des hôtels filtrés
-async function fetchHotels(filters = {}) {
-    console.log("🔍 Appel API avec filtres :", filters);
-    try {
-        console.log("📡 Envoi de la requête à filter_hotels...");
-        const response = await fetch('/filter_hotels', {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(filters)
-        });
-
-        if (!response.ok) throw new Error(`Erreur: ${response.statusText}`);
-
-        const hotels = await response.json();
-        console.log("✅ Réponse complète des hôtels après filtrage :", hotels);
-        renderHotels(hotels);
-    } catch (error) {
-        console.error('❌ Erreur lors de la récupération des hôtels :', error);
-        isFiltering = false;  // ✅ Permet de refaire une requête après une erreur
-        isGlobalSearchActive = false;  // ✅ Assurer que la recherche globale ne bloque pas le filtrage
-    }
-}
-
+// ============================
+// 5. 📡 Soumission du formulaire de recherche
+// ============================
 document.getElementById("search-form").addEventListener("submit", function (event) {
-    event.preventDefault(); // 🔥 Empêche la soumission classique
+    event.preventDefault();
 
-    isGlobalSearchActive = true; // 🚀 Active l'état de recherche globale
+    isGlobalSearchActive = true;
+    setTimeout(() => { isGlobalSearchActive = false; }, 1000);
 
-    // 🔍 Récupère les valeurs du formulaire
-    const dateRange = document.getElementById("date-range").value.trim().split(" au ");
-    const filters = {
-        destination: document.getElementById("city").value.trim(),
-        start_date: dateRange.length === 2 ? dateRange[0] : null,
-        end_date: dateRange.length === 2 ? dateRange[1] : null,
-        adults: parseInt(document.getElementById("adults").value, 10),
-        children: parseInt(document.getElementById("children").value, 10),
-        pets: document.getElementById("pets").checked ? 1 : 0
-    };
+    let filters = cleanFilters(getGlobalFiltersFromForm());
 
     if (!filters.start_date || !filters.end_date) {
         alert("Veuillez sélectionner une période de séjour.");
-        isGlobalSearchActive = false; // ❌ Désactive la recherche globale si annulation
-        return; 
+        isGlobalSearchActive = false;
+        return;
     }
 
     console.log("📌 Recherche globale envoyée :", filters);
 
     fetch("/recherche", {
         method: "POST",
-        headers: { "Content-Type": "application/json" }, // ✅ JSON obligatoire
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(filters)
     })
     .then(response => {
@@ -177,104 +125,19 @@ document.getElementById("search-form").addEventListener("submit", function (even
     })
     .then(hotels => {
         console.log("✅ Hôtels trouvés via recherche générale :", hotels);
-        renderHotels(hotels);
-        isGlobalSearchActive = false; // ✅ Désactive la recherche globale après succès
+        renderHotelsWithReviews(hotels);
+        isGlobalSearchActive = false;
     })
     .catch(error => {
         console.error("❌ Erreur lors de l'appel à l'API recherche :", error);
-        isGlobalSearchActive = false; // ❌ Désactive en cas d’erreur
+        isGlobalSearchActive = false;
     });
 });
 
-// 🏨 Application des filtres pour la recherche d'hôtels
-function applyFilters() {
-        console.log("🚀 applyFilters() appelé !");
-    // if (document.activeElement.form && document.activeElement.form.id === "search-form") {
-        if (isGlobalSearchActive) {
-            console.warn("⚠️ Filtrage bloqué : Une recherche globale est en cours.");
-            return;
-        }        
 
-    isFiltering = true;
-
-    const filters = {
-        stars: [...document.querySelectorAll('input[name="stars"]:checked')].map(i => parseInt(i.value, 10)),
-        max_price: parseInt(document.getElementById('maxPrice')?.value || "500", 10),
-        max_rooms: parseInt(document.getElementById('maxRooms')?.value || "70", 10),
-        hotel_name: document.getElementById('hotelName')?.value.trim() || null,
-        city_name: document.getElementById('cityInput')?.value.trim() || null
-    };
-
-    // ✅ Regroupement des équipements sous un seul objet
-    const equipements = ["parking", "restaurant", "piscine", "pets_allowed", "washing_machine", "wheelchair_accessible", "gym", "spa", "free_wifi", "air_conditioning", "ev_charging", "kitchenette"];
-    equipements.forEach(equip => {
-        filters[equip] = document.getElementById(equip)?.checked ? 1 : null;
-    });
-
-    // ✅ Gestion filtre note des clients
-    const ratingCheckboxes = document.querySelectorAll('input[name="hotel_rating"]:checked');
-    const hotelRatings = Array.from(ratingCheckboxes).map(input => parseFloat(input.value));
-    if (hotelRatings.length > 0) {
-        filters.hotel_rating = hotelRatings;
-    }
-
-    // ✅ Gestion filtre restauration
-    filters.meal_plan = Array.from(document.querySelectorAll('input[name="meal_plan"]:checked')).map(input => input.value);
-
-    // ✅ Nettoyage des filtres vides
-    Object.keys(filters).forEach(key => {
-        if (filters[key] === null || (Array.isArray(filters[key]) && filters[key].length === 0) || filters[key] === '') {
-            delete filters[key];
-        }
-    });
-
-    console.log("📌 Filtres envoyés après nettoyage :", filters);
-    fetchHotels(filters).then(() => {
-        isFiltering = false;
-    });
-}
-
-// ♻️ Réinitialisation des filtres
-function resetFilters() {
-    console.log("♻️ Réinitialisation des filtres...");
-    
-    isGlobalSearchActive = false; // ✅ Réactive les filtres spécifiques
-    document.getElementById('filterForm').reset();
-    const cityInput = document.getElementById('cityInput');
-    if (cityInput) cityInput.value = ""; 
-
-    if (!isFiltering) {
-        fetchAllHotels();
-    }
-}
-
-// ✈️ Gère l'autocomplétion pour la destination (continent, pays, ville)
-function autoComplete(query) {
-    if (query.length < 3) {
-        document.getElementById("suggestions").innerHTML = "";
-        return;
-    }
-
-    fetch(`/autocomplete?query=${query}`)
-        .then(response => response.json())
-        .then(data => {
-            let suggestionsList = document.getElementById("suggestions");
-            suggestionsList.innerHTML = "";
-
-            data.forEach(item => {
-                let listItem = document.createElement("li");
-                listItem.textContent = item;
-                listItem.onclick = function () {
-                    document.getElementById("city").value = item;
-                    suggestionsList.innerHTML = "";
-                };
-                suggestionsList.appendChild(listItem);
-            });
-        })
-        .catch(error => console.error("Erreur d'autocomplétion :", error));
-}
-
-// 📌 Récupérer les paramètres GET de l'URL
+// ============================
+// 6. 🔎 Filtres spécifiques / URL
+// ============================
 function getURLParams() {
     const params = new URLSearchParams(window.location.search);
     return {
@@ -287,64 +150,105 @@ function getURLParams() {
     };
 }
 
-// 📡 Appliquer les filtres reçus depuis `index.html` dans `hotel.html`
-async function fetchFilteredHotels() {
-    const filters = getURLParams(); // Récupération des filtres
+async function fetchFilteredHotelsFromURL() {
+    let filters = cleanFilters(getURLParams());
 
-    // 🚨 Vérification que les dates sont bien présentes
     if (!filters.start_date || !filters.end_date) {
         console.warn("⚠️ Les dates ne sont pas fournies, chargement de tous les hôtels.");
-        fetchAllHotels(); // Charger tous les hôtels si pas de filtre
+        fetchAllHotels(renderHotelsWithReviews);
         return;
     }
 
-    console.log("🔍 Recherche avec filtres :", filters);
+    console.log("🔍 Recherche avec filtres (depuis URL) :", filters);
+    await fetchFilteredHotels(filters, renderHotelsWithReviews);
+}
 
-    try {
-        const response = await fetch("/recherche", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(filters)
-        });
+async function applyFilters() {
+    console.log("🚀 applyFilters() appelé !");
+    if (isFiltering || isFilterProcessing) {
+        console.warn("⚠️ Filtrage bloqué : Un filtrage est déjà en cours.");
+        return;
+    }
 
-        if (!response.ok) throw new Error(`Erreur: ${response.statusText}`);
+    isFilterProcessing = true;
+    isFiltering = true;
+    isGlobalSearchActive = true;
 
-        const hotels = await response.json();
-        console.log("✅ Hôtels trouvés :", hotels);
-        renderHotels(hotels);
-    } catch (error) {
-        console.error("❌ Erreur lors de la récupération des hôtels :", error);
+    if (fetchAllHotelsTimeout) {
+        clearTimeout(fetchAllHotelsTimeout);
+        fetchAllHotelsTimeout = null;
+    }
+
+    let filters = cleanFilters(getSpecificFilters());
+
+    await fetchHotels(filters, renderHotelsWithReviews);
+
+    setTimeout(() => {
+        isGlobalSearchActive = false;
+        isFiltering = false;
+        isFilterProcessing = false;
+    }, 5000);
+
+    if (!isFiltering && !isFilterProcessing) {
+        isGlobalSearchActive = false;
     }
 }
 
-// ✅ Gestion des événements au chargement
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("🚀 Page chargée, récupération des hôtels...");
 
-    const filters = getURLParams(); // Récupère les filtres envoyés depuis index.html
-    if (filters.destination || filters.start_date) {
-        console.log("🎯 Filtres détectés, lancement de la recherche filtrée...");
-        fetchFilteredHotels(); // 🔍 Applique les filtres si présents
-    } else {
-        console.log("📌 Aucun filtre détecté, chargement de tous les hôtels.");
-        fetchAllHotels(); // 🏨 Charge tous les hôtels par défaut
+// ============================
+// 7. 🧼 Réinitialisation des filtres
+// ============================
+function resetFilters() {
+    isFiltering = false;
+    isFilterProcessing = false;
+    isGlobalSearchActive = false;
+
+    const filterForm = document.getElementById('filterForm');
+    if (filterForm) filterForm.reset();
+
+    const cityInput = document.getElementById('cityInput');
+    if (cityInput) cityInput.value = "";
+
+    if (fetchAllHotelsTimeout) {
+        clearTimeout(fetchAllHotelsTimeout);
+        fetchAllHotelsTimeout = null;
     }
 
-    // ✅ Vérifie que le formulaire de filtrage existe avant d'ajouter l'événement
-    const filterForm = document.getElementById('filterForm');
-    if (filterForm) {
-        console.log("✅ Formulaire de filtrage trouvé !");
-        filterForm.addEventListener('submit', (event) => {
+    fetchAllHotels(renderHotelsWithReviews);
+}
+
+
+// ============================
+// 8. 🚀 Initialisation DOM
+// ============================
+document.addEventListener("DOMContentLoaded", () => {
+    checkLoginOnLoad();
+
+    const filters = getURLParams();
+    if (filters.destination || filters.start_date) {
+        fetchFilteredHotelsFromURL();
+    } else {
+        fetchAllHotels(renderHotelsWithReviews);
+    }
+    isGlobalSearchActive = false;
+
+    const searchFiltersButton = document.getElementById("search-filters");
+    const resetFiltersButton = document.getElementById('reset-filters');
+
+    if (searchFiltersButton) {
+        searchFiltersButton.addEventListener("click", (event) => {
             event.preventDefault();
             applyFilters();
         });
-    } else {
-        console.error("⚠️ Le formulaire de filtrage 'filterForm' n'a pas été trouvé !");
     }
 
-    document.getElementById('reset-filters').addEventListener('click', resetFilters);
+    if (resetFiltersButton) {
+        resetFiltersButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            resetFilters();
+        });
+    }
 
-    // ✅ Gestion du dropdown "nb adultes / nb enfants"
     const dropdown = document.getElementById("peopleDropdown");
     const inputField = document.getElementById("peopleInput");
 
@@ -375,10 +279,3 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-function redirectToReservation(hotelId) {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("hotel_id", hotelId); // Ajoute l'ID de l'hôtel aux paramètres
-
-    // 🔄 Redirige vers la page de réservation avec les paramètres
-    window.location.href = reservationLink;
-}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Réservations - JustDreams</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/mesReservations.css') }}">
+    <link rel="icon" href="/static/Image/JustDreamslogo.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <h1>Mes Réservations</h1>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button id="back-home" class="back-button">🏠 Retour à l'accueil</button>
+        </div>
+    </header>
+
+    <main>
+        <div id="reservations-container" class="reservations-container">
+            <!-- Les cartes de réservations seront injectées ici -->
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='JS/gestionReservations/mesReservations.js') }}"></script>
+
+</body>
+</html>

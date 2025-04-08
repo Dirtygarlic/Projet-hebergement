@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="{{ url_for('static', filename='CSS/confirmation.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>🌟 Merci pour votre réservation, {{ first_name }} !</h1>
+    <p>Votre séjour chez <strong>{{ hotel_name }}</strong> est désormais confirmé.</p>
+
+    <div class="details">
+      <p><strong>Dates :</strong> du {{ checkin }} au {{ checkout }}</p>
+      <p><strong>Nombre de voyageurs :</strong> {{ guests }}</p>
+      <p><strong>Prix total :</strong> {{ total_price }} €</p>
+    </div>
+
+    <div class="cta">
+      <a href="http://127.0.0.1:5003">Voir ma réservation</a>
+    </div>
+
+    <footer>
+      Ce message vous a été envoyé par JustDreams.com - Explorez le monde avec style ✈️
+    </footer>
+  </div>
+</body>
+</html>

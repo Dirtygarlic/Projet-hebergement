@@ -1,3 +1,6 @@
+# ============================
+# 🚀 Initialisation des extensions Flask
+# ============================
 import sqlite3
 import random
 import logging
@@ -8,6 +11,11 @@ from datetime import datetime, timedelta
 
 # Initialisation de l'application Flask
 app = Flask(__name__, static_folder="../../static", template_folder="../../Frontend/templates")  # Chemin relatif vers les templates
+
+
+# ============================
+# 🔧 Connexion à la base de données SQLite
+# ============================
 
 # Fonction pour gérer la connexion à la base de données SQLite
 def get_db_connection():
@@ -22,7 +30,10 @@ def close_db_connection(exception):
     if hasattr(g, 'sqlite_db'):  # Vérifier si la connexion à la DB existe
         g.sqlite_db.close()  # Fermer la connexion à la base de données
 
-# Création des tables nécessaires
+
+# ============================
+# 🧱 Création des tables de la base de données
+# ============================
 def create_tables():
     try:
         with get_db_connection() as conn:
@@ -36,7 +47,7 @@ def create_tables():
                 continent TEXT NOT NULL
             );''')
                     
-            # Table des villes avec une relation de clé étrangère vers countries
+            # Creation de la table des villes avec une relation de clé étrangère vers countries
             cursor.execute('''CREATE TABLE IF NOT EXISTS cities (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
@@ -48,7 +59,7 @@ def create_tables():
             # Création d'un index pour la relation entre villes et pays
             cursor.execute('''CREATE INDEX IF NOT EXISTS idx_cities_country_id ON cities(country_id);''')
 
-            # Table des hôtels avec une relation de clé étrangère vers cities
+            # Creation de la table des hôtels avec une relation de clé étrangère vers cities
             cursor.execute('''CREATE TABLE IF NOT EXISTS hotels (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
@@ -85,15 +96,70 @@ def create_tables():
             # Création d'un index pour améliorer les performances des requêtes sur hotels
             cursor.execute('''CREATE INDEX IF NOT EXISTS idx_hotels_city_id ON hotels(city_id);''')
 
-            # Création de la table reviews pour les avis des utilisateurs
-            cursor.execute('''CREATE TABLE IF NOT EXISTS reviews (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                hotel_id INTEGER NOT NULL,
-                user_name TEXT NOT NULL,
-                rating INTEGER NOT NULL,
-                comment TEXT,
-                FOREIGN KEY (hotel_id) REFERENCES hotels (id)
-            )''')
+            # Création de la table reviews pour stocker les avis des utilisateurs
+            # La table reviews est créée ici, mais les avis fictifs sont insérés séparément via appAjoutAvisFictifs.py
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS reviews (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    hotel_id INTEGER NOT NULL,
+                    user_id INTEGER NOT NULL,
+                    rating INTEGER NOT NULL CHECK(rating BETWEEN 7 AND 10),
+                    comment TEXT,
+                    date_posted DATE DEFAULT CURRENT_DATE,
+                    FOREIGN KEY (hotel_id) REFERENCES hotels(id),
+                    FOREIGN KEY (user_id) REFERENCES Users(id_user)
+                )
+            ''')
+
+            # Création de la table reservation pour stocker les reservations des utilisateurs
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS reservations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    hotel_id INTEGER NOT NULL,
+                    user_id INTEGER,
+                    created_at DATETIME DEFAULT DATETIME('now'),
+                    checkin TEXT NOT NULL,
+                    checkout TEXT NOT NULL,
+                    guests INTEGER NOT NULL,
+                    adults INTEGER NOT NULL,
+                    children INTEGER NOT NULL,
+                    gender TEXT,
+                    first_name TEXT NOT NULL,
+                    user_name TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    phone TEXT NOT NULL,
+                    status TEXT DEFAULT 'pending',
+                    stripe_customer_id TEXT DEFAULT NULL,
+                    total_price REAL,
+                    cancelled_at DATETIME DEFAULT NULL,
+                    FOREIGN KEY(user_id) REFERENCES user(id_user),
+                    FOREIGN KEY(hotel_id) REFERENCES hotels(id)
+                )
+            """)
+
+            # Création de la table user
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS user (
+                    id_user INTEGER NOT NULL, 
+                    name VARCHAR(100) NOT NULL, 
+                    first_name VARCHAR(100) NOT NULL, 
+                    email VARCHAR(100) NOT NULL, 
+                    password VARCHAR(200) NOT NULL, 
+                    phone VARCHAR(15), 
+                    created_at DATETIME, 
+                    stripe_customer_id TEXT DEFAULT NULL,
+                    PRIMARY KEY (id_user), 
+                    UNIQUE (email)
+                );
+            ''')
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    email TEXT NOT NULL UNIQUE,
+                    subscribed_at TEXT DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
 
             conn.commit()
 
@@ -103,11 +169,17 @@ def create_tables():
             if conn:
                 conn.rollback()  # Annule les modifications si une erreur survient
 
-# Clé API OpenCage (remplace par ta propre clé)
+
+# ============================
+# 🗺️ Géocodage avec OpenCage API
+# ============================
+
+# Clé API OpenCage et initialisation
 API_KEY = "2fb9ebbe9e88490cb39edf48d3016309"
 geocoder = OpenCageGeocode(API_KEY)
 coordinate_cache = {}  # Cache local pour stocker les coordonnées GPS
 
+# Fonction pour obtenir les coordonnées GPS
 def get_coordinates(address):
     """
     Récupère les coordonnées GPS (latitude, longitude) d'une adresse via l'API OpenCage.
@@ -126,8 +198,11 @@ def get_coordinates(address):
     except Exception as e:
         print(f"❌ Erreur API : {e}")
     return None, None
-    
-# Insertion de données fictives dans la base de données
+
+
+# ============================
+# 🏨 Insertion de données fictives (pays, villes, hôtels)
+# ============================  
 def insert_data():
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -393,86 +468,24 @@ def insert_data():
                     hotel['meal_plan'], hotel['kitchenette'], hotel['hotel_rating'], hotel['address'], hotel['description'],
                     latitude, longitude, 
                     (datetime.now() + timedelta(days=random.randint(1, 30))).strftime('%Y-%m-%d'),
-                    (datetime.now() + timedelta(days=random.randint(31, 60))).strftime('%Y-%m-%d'),
+                    (datetime.now() + timedelta(days=random.randint(31, 60))).strftime('%Y-%m-%d')
                 ))
 
                 # Pause pour éviter de dépasser la limite d'appels à l'API
                 time.sleep(0.5)
 
             conn.commit()
-        except sqlite3.Error as e:
+            print("✅ Données insérées (pays, villes, hôtels) – version simplifiée.")       
+            # Code qui peut générer une erreur
+        
+        except Exception as e:
             conn.rollback()
-            logging.error(f"Erreur lors de l'insertion des données : {e}")
-            
-def ajouter_avis_fictifs():
-    # Connexion à la BDD hotels.db
-    conn_hotels = sqlite3.connect('hotels.db')
-    cursor_hotels = conn_hotels.cursor()
-    
-    # Connexion à la BDD inscription.db pour récupérer les utilisateurs existants
-    conn_clients = sqlite3.connect('inscription.db')
-    cursor_clients = conn_clients.cursor()
-    
-    # Création de la table reviews si elle n'existe pas
-    cursor_hotels.execute('''
-        CREATE TABLE IF NOT EXISTS reviews (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            hotel_id INTEGER NOT NULL,
-            user_id INTEGER NOT NULL,
-            rating INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),
-            comment TEXT,
-            date_posted DATE DEFAULT CURRENT_DATE,
-            FOREIGN KEY (hotel_id) REFERENCES hotels(id),
-            FOREIGN KEY (user_id) REFERENCES Users(id_user)
-        )
-    ''')
-    conn_hotels.commit()
-    
-    # Récupérer tous les utilisateurs de inscription.db
-    cursor_clients.execute("SELECT id_user FROM Users")
-    users = [row[0] for row in cursor_clients.fetchall()]
-    
-    # Vérifier s'il y a des utilisateurs dans la BDD
-    if not users:
-        print("⚠ Aucun utilisateur trouvé dans inscription.db. Ajoutez des utilisateurs avant d'insérer des avis.")
-    else:
-        # Récupérer tous les hôtels
-        cursor_hotels.execute("SELECT id, hotel_rating FROM hotels")
-        hotels = cursor_hotels.fetchall()
-    
-        for hotel in hotels:
-            hotel_id, hotel_rating = hotel
-            num_reviews = random.randint(1, 10)  # Nombre aléatoire d'avis par hôtel
-    
-            for _ in range(num_reviews):
-                user_id = random.choice(users)  # Sélectionner un utilisateur aléatoire
-                # Générer une note autour de hotel_rating
-                rating = max(1, min(5, round(random.gauss(hotel_rating / 2, 1))))  # Distribution autour de la moyenne
-                # Générer un commentaire fictif
-                comments = [
-                    "Excellent service et très bon emplacement.",
-                    "Chambres propres et confortables.",
-                    "Bonne expérience mais quelques points à améliorer.",
-                    "Bruyant la nuit, mais personnel sympathique.",
-                    "Le petit-déjeuner était incroyable !",
-                    "Rapport qualité/prix correct.",
-                    "Expérience décevante, je ne reviendrai pas.",
-                    "Séjour parfait, je recommande cet hôtel !",
-                    "Hôtel bien situé, mais un peu cher pour les prestations.",
-                    "Piscine et spa exceptionnels, séjour très agréable."
-                ]
-                comment = random.choice(comments)
-                date_posted = datetime.now().strftime('%Y-%m-%d')
-    
-                # Insérer l'avis dans la table reviews
-                cursor_hotels.execute('''
-                    INSERT INTO reviews (hotel_id, user_id, rating, comment, date_posted)
-                    VALUES (?, ?, ?, ?, ?)
-                ''', (hotel_id, user_id, rating, comment, date_posted))
-    
-        conn_hotels.commit()
-        print("✅ Avis fictifs insérés avec succès.")
+            print("❌ Erreur lors de l'insertion :", e)
 
+
+# ============================
+# 🧭 Mise à jour des coordonnées GPS manquantes
+# ============================
 def update_hotel_coordinates():
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -493,68 +506,18 @@ def update_hotel_coordinates():
             # Pause pour éviter les limites de l'API
             time.sleep(0.5)
 
-# Fonction pour assigner aléatoirement des images aux hôtels
-def assign_hotel_images():
-    images = ["hotel1.jpg", "hotel2.jpg", "hotel3.jpg", "hotel4.jpg", "hotel5.jpg","hotel6.jpg", "hotel7.jpg", "hotel8.jpg", "hotel9.jpg", "hotel10.jpg"]
-    with get_db_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT id FROM hotels")
-        hotels = cursor.fetchall()
-        for hotel in hotels:
-            image = random.choice(images)
-            cursor.execute("UPDATE hotels SET image_url = ? WHERE id = ?", (image, hotel["id"]))
-        conn.commit()
-
-# Fonction pour récupérer les hôtels avec leurs images
-@app.route('/hotels', methods=['GET'])
-def get_hotels():
-    with get_db_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT id, name, city_id, image_url FROM hotels")
-        hotels = [{"id": row["id"], "name": row["name"], "city_id": row["city_id"], "image": f"/static/Image/{row['image_url']}"} for row in cursor.fetchall()]
-        return jsonify(hotels)
-
-#Insertion des avis fictifs pour les hôtels
-def insert_reviews():
-    with get_db_connection() as conn:
-        cursor = conn.cursor()
-
-        # Insertion des avis pour chaque hôtel
-        for hotel in hotels_data: # type: ignore
-            # Récupérer l'ID de l'hôtel en fonction de son nom
-            hotel_id = cursor.execute('SELECT id FROM hotels WHERE name = ?', (hotel["name"],)).fetchone()['id']
-
-            for i in range(5):  # Créer 5 avis fictifs pour chaque hôtel
-                # Générer un nom d'utilisateur aléatoire
-                user_name = f"User{random.randint(1, 100)}"
-                # Générer une note aléatoire entre 1 et 5
-                rating = random.randint(1, 5)
-                # Générer un commentaire aléatoire
-                comment = f"Comment {i+1} for {hotel['name']}"
-
-                # Insertion de l'avis dans la table reviews
-                cursor.execute('''INSERT INTO reviews (hotel_id, user_name, rating, comment) 
-                                VALUES (?, ?, ?, ?)''', (hotel_id, user_name, rating, comment))
-
-    conn.commit()
-    
 # Fonction pour démarrer l'application Flask
 if __name__ == '__main__':
     # Initialisations avant de démarrer le serveur
     with app.app_context():  # Créer un contexte d'application Flask
         print("📌 Création des tables...")
-        #create_tables()  
+        create_tables()  
 
         print("📌 Insertion des données...")
-        #insert_data()
-
-        print("📌 Insertion des avis fictifs...")
+        insert_data()
 
         print("📌 Mise à jour des coordonnées GPS...")
         update_hotel_coordinates()  
-
-        print("📌 Attribution des images...")
-        assign_hotel_images()
 
     print("🚀 Lancement du serveur Flask...")
     app.run(debug=True)
