@@ -1,4 +1,46 @@
-console.log("🧠 Script indexFiltreHotel.js bien chargé !");
+// =============================================================
+// 📁 indexFiltreHotel.js
+// -------------------------------------------------------------
+// Ce fichier gère toute la logique liée à la **recherche globale**
+// d’hôtels sur les pages `index.html`, `reservations.html` et
+// `paiement.html`, ainsi que le traitement automatique des
+// paramètres d’URL et l’envoi vers la page `hotel.html`.
+//
+// 🎯 Objectif :
+// Permettre à l’utilisateur d’effectuer une recherche complète
+// (lieu, dates, nombre de voyageurs, animaux) depuis l’accueil,
+// et rediriger vers la page `hotel.html` avec les bons paramètres.
+//
+// 🔧 Fonctionnalités :
+// - 📦 Importation des modules de filtres, d’autocomplétion, de rendu et d’API
+// - 📅 Initialisation du calendrier `Flatpickr` pour sélectionner les dates
+// - 🌍 Lecture automatique des paramètres de l’URL pour pré-remplir le formulaire
+// - 📝 Écoute de l’envoi du formulaire pour :
+//     → vérifier les dates,
+//     → créer un objet `filters`,
+//     → rediriger vers `hotel.html?param1=...&param2=...`
+// - 🧠 Si on est déjà sur `hotel.html` :
+//     → récupérer les paramètres,
+//     → charger dynamiquement les hôtels filtrés depuis l’API,
+//     → afficher avec `renderHotelsWithReviews()`
+// - 👥 Gestion de l’UI pour le champ “nombre de personnes” avec un menu déroulant dynamique
+//
+// ✅ Utilisé pour centraliser la logique de recherche globale,
+// afin de garantir une cohérence UX sur toutes les pages principales.
+//
+// 📦 Dépendances :
+// - `hotelAutoComplete.js` pour l’autocomplétion du champ ville
+// - `hotelGlobalFilters.js` pour récupérer les champs du formulaire
+// - `hotelApi.js` pour appeler `/recherche`
+// - `hotelRender.js` pour afficher les résultats sur `hotel.html`
+//
+// 🧩 Pages concernées :
+// - `index.html`, `reservations.html`, `paiement.html`, `hotel.html`
+//
+// ⚠️ Ce script est conçu pour ne s’exécuter que sur les pages autorisées,
+// grâce à la liste `allowedPages` définie en haut du script.
+// =============================================================
+
 
 // ============================
 // 📦 Importations des modules

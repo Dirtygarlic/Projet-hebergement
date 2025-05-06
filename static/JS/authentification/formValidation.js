@@ -1,3 +1,48 @@
+// =============================================================
+// 📁 formValidation.js
+// -------------------------------------------------------------
+// Ce fichier centralise toutes les fonctions JavaScript liées à
+// la validation des champs de formulaire côté client : téléphone,
+// email et mot de passe. Il est utilisé notamment lors de l'inscription.
+//
+// 🎯 Objectif :
+// Fournir une validation instantanée et intuitive aux utilisateurs
+// pour garantir que les données saisies sont correctes et sécurisées.
+//
+// 🔧 Fonctions principales :
+//
+// ✅ Téléphone
+// - `validatePhoneInput()` : vérifie que le champ contient uniquement des chiffres.
+//
+// ✅ Email
+// - `validateEmailInput()` : vérifie que l'email est au bon format,
+//   affiche ou masque une erreur, et active/désactive le bouton de soumission
+//   selon la force du mot de passe.
+//
+// ✅ Mot de passe
+// - `isStrongPassword(password)` : vérifie que le mot de passe respecte
+//   les critères de sécurité (majuscule, minuscule, chiffre, spécial, etc.).
+// - `getPasswordStrength(password)` : retourne un score de robustesse (0 à 5).
+// - `updateStrengthDisplay(strength, element)` : affiche un message et une couleur
+//   selon la robustesse calculée.
+// - `updatePasswordCriteria(password)` : coche ou décoche dynamiquement les critères visibles.
+// - `updatePasswordInputStyle(inputElement, strength)` : colore le champ selon la robustesse.
+// - `toggleRegisterButton(password)` : désactive le bouton si le mot de passe est trop faible.
+//
+// ✅ Avantages :
+// - Validation instantanée sans requête serveur.
+// - UX améliorée avec feedback visuel clair.
+// - Sécurité renforcée côté front.
+//
+// 🧩 Dépendances :
+// - Utilisé dans `index.js`, `authHandlers.js`, et les pages d’inscription/connexion.
+//
+// 📦 Requiert certains éléments HTML avec les IDs :
+// - `#phone-error`, `#email-error`, `#register-password`, `#register-submit`, etc.
+//
+// =============================================================
+
+
 // ============================
 // 🧪 Validation des champs de formulaire (téléphone, email)
 // ============================

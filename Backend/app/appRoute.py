@@ -1,58 +1,80 @@
 # =========================================
 # 📚 SOMMAIRE DU FICHIER appRoute.py
 # =========================================
-# 🚀 Initialisation & Configuration
-#   - Import des modules
-#   - Chargement des variables d'environnement
-#   - Initialisation de Flask, CORS, SQLAlchemy, Mail
-#   - Initialisation des extensions d'inscription
-#   - Configuration Stripe
-#   - Initialisation manuelle SQLAlchemy (hors Flask-SQLAlchemy)
-#
-# 📂 Gestion de la base de données
-#   - get_db_connection()
-#   - close_db_connection()
-#
-# 🌐 Routes HTML (pages visibles)
-#   - /                  → Page d'accueil (index.html)
-#   - /paiement          → Page paiement avec clé Stripe
-#   - /resetPassword     → Page de réinitialisation
-#   - /hotel             → Page avec filtres et avis
-#   - /reservations      → Page avec carte et détails hôtel
-#   - /success /cancel   → Pages suite au paiement Stripe
-#
-# 📧 Newsletter
-#   - /subscribe         → Inscription à la newsletter
-#
-# 🔍 Fonctions de recherche / filtrage
-#   - /autocomplete              → Suggestions auto
-#   - /hotels                   → Liste des hôtels + avis
-#   - /recherche                → Recherche globale
-#   - /filter_hotels            → Filtres avancés
-#   - /get_reviews              → Trie des avis
-#   - /get_hotel_name           → Récupère le nom d’un hôtel
-#   - /get_price_per_night/<id> → Prix par nuit
-#
-# 📩 Réservations & Paiement Stripe
-#   - /api/reservations            → Création de réservation
-#   - /create-checkout-session     → Création session de paiement
-#   - /stripe-webhook              → Webhook de confirmation
-#   - /send-confirmation-email     → Email de confirmation manuel
-#
-# 👤 Espace utilisateur
-#   - /mes-reservations                   → Page mes réservations
-#   - /api/mes-reservations/<user_id>     → Récupère les réservations
-#   - /api/reservations/<id> (DELETE)     → Annule une réservation
-#
-# 🩹 Nettoyage automatique des réservations
-#   - clean_old_pending_reservations()        → Supprime après 24h
-#   - /admin/clean-pending                    → Route admin
-#   - schedule_cleaning_task()                → Thread automatique
+
+# 1. 🚀 Initialisation & Configuration
+#    1.1. Import des modules nécessaires
+#    1.2. Chargement des variables d’environnement (.env)
+#    1.3. Définition du chemin absolu de la base de données
+#    1.4. Initialisation de l'application Flask
+#    1.5. Configuration SQLAlchemy
+#    1.6. Configuration Stripe
+#    1.7. Configuration Flask-Mail
+#    1.8. Initialisation manuelle SQLAlchemy
+#    1.9. Initialisation de Flask-Mail
+#    1.10. Initialisation des Blueprints (inscription)
+
+# 2. 🔧 Connexion à la base de données
+#    2.1. get_db_connection() → Ouverture
+#    2.2. close_db_connection() → Fermeture automatique
+
+# 3. 🌐 Pages HTML visibles
+#    3.1. /                      → Accueil (index.html)
+#    3.2. /paiement              → Page de paiement
+#    3.3. /stripe_config.js      → Script Stripe
+#    3.4. /resetPassword         → Réinitialisation du mot de passe
+#    3.5. /mes-reservations      → Mes réservations
+#    3.6. /contact (GET)         → Formulaire contact (affichage)
+
+# 4. 🏨 Pages dynamiques hôtels & réservations
+#    4.1. /hotel                 → Page des hôtels avec filtres et avis
+#    4.2. /reservations          → Page de réservation détaillée d’un hôtel
+#    4.3. /api/default-hotel     → Hôtel par défaut (Le Parisien Luxe)
+
+# 5. 📧 Newsletter
+#    5.1. /subscribe (POST)      → Inscription à la newsletter
+
+# 6. 💬 Contact
+#    6.1. /contact (POST)        → Envoi du formulaire de contact
+
+# 7. 🔍 Recherche & Filtres
+#    7.1. /autocomplete (GET)    → Suggestions auto
+#    7.2. /hotels (GET)          → Liste complète des hôtels
+#    7.3. /recherche (POST)      → Recherche globale
+#    7.4. /filter_hotels (POST)  → Filtres avancés
+#    7.5. /get_reviews (GET)     → Avis d’un hôtel
+#    7.6. /get_hotel_name (GET)  → Nom d’un hôtel
+#    7.7. /get_price_per_night/<id> (GET) → Prix d’un hôtel
+
+# 8. 📦 Réservations & Stripe
+#    8.1. /api/reservations (POST)        → Réservation (désactivé)
+#    8.2. /stripe-webhook (POST)          → Webhook Stripe
+#    8.3. /create-checkout-session (POST) → Session Stripe Checkout
+
+# 9. ✅ Pages de confirmation Stripe
+#    9.1. /success              → Paiement réussi
+#    9.2. /cancel               → Paiement annulé
+
+# 10. 👤 Espace utilisateur
+#    10.1. /api/mes-reservations/<user_id> → Réservations utilisateur
+#    10.2. /api/reservations/<id> (DELETE) → Annulation d’une réservation
+
+# 11. 🧹 Nettoyage automatique des réservations
+#    11.1. /admin/clean-pending           → Nettoyage manuel
+#    11.2. clean_old_pending_reservations() → Suppression > 24h
+#    11.3. schedule_cleaning_task()         → Thread toutes les 12h
+
+# 12. 🧪 Exécution du serveur Flask
+#    12.1. if __name__ == '__main__'
+
 # =========================================
 
-# ============================
-# 🚀 Initialisation des extensions Flask
-# ============================
+
+# =========================================
+# 1. 🚀 Initialisation & Configuration
+# =========================================
+
+# 1.1. Import des modules nécessaires
 import sqlite3
 import logging
 import traceback
@@ -62,7 +84,7 @@ import threading
 import time
 from flask_cors import CORS
 from flask_mail import Mail, Message
-from flask import Flask, flash, g, request, jsonify, redirect, render_template, render_template_string
+from flask import Flask, flash, g, request, jsonify, redirect, render_template, render_template_string, url_for
 from appInscription import inscription_bp, init_inscription_extensions
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
@@ -70,53 +92,35 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
-# ============================
-# 🔐 Chargement des variables d’environnement
-# ============================
+# 1.2. Chargement des variables d’environnement (.env)
 load_dotenv("securite_mdp.env")
 stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY")
+
 print("🔑 Clé publique Stripe (test) chargée :", "OK" if stripe_public_key else "Non trouvée")
 
 
-# ============================
-# 📁 Définition du chemin absolu de la base de données
-# ============================
+# 1.3. Définition du chemin absolu de la base de données
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, 'hotels.db')
 
 
-# ============================
-# 🛠️ Initialisation manuelle SQLAlchemy (hors Flask-SQLAlchemy)
-# ============================
-engine = create_engine(f"sqlite:///{db_path}")
-Session = sessionmaker(bind=engine)
-db_session = Session()
-
-
-# ============================
-# 🔧 Initialisation de l'application Flask
-# ============================ 
+# 1.4. Initialisation de l'application Flask
 app = Flask(__name__, static_folder="../../static", template_folder="../../Frontend/templates")  # Chemin relatif vers les templates
 CORS(app)
 
 
-# ============================
-# 🔧 Initialisation de l'application Flask-mail
-# ============================ 
-mail = Mail(app)
-mail.init_app(app)
-
-
-# ============================
-# 🛠️ Configuration de la base de données pour SQLAlchemy
-# ============================
+# 1.5. Configuration de la base de données pour SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
-# ============================
-# 🛠️ Configuration Flask-Mail 
-# ============================
+# 1.6. Configuration Stripe           
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "justdreams_secret_123")
+
+
+# 1.7 Configuration Flask-Mail 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -125,30 +129,27 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
 
 
-# ============================
-# 🧩 Initialisation des extensions liées à l'inscription
-# ============================
+#1.8. Initialisation manuelle SQLAlchemy
+engine = create_engine(f"sqlite:///{db_path}")
+Session = sessionmaker(bind=engine)
+db_session = Session()
+
+
+# 1.9. Initialisation de Flask-Mail
+mail = Mail(app)
+mail.init_app(app)
+
+
+# 1.10. Initialisation des extensions liées à l'inscription
 init_inscription_extensions(app)
-
-
-# ============================
-# 📌 Enregistrement du Blueprint d'inscription
-# ============================
 app.register_blueprint(inscription_bp)
 
 
-# ============================
-# 🔧 Configuration Stripe
-# ============================            
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
-endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "justdreams_secret_123")
+# =========================================
+# 2. 🔧 Connexion à la base de données
+# =========================================
 
-
-# ============================
-# 🔧 Connexion à la base de données SQLite
-# ============================
-# Récupère ou initialise une connexion à la base de données SQLite
+# 2.1. get_db_connection() → Ouverture
 def get_db_connection():
     if not hasattr(g, 'sqlite_db'):  # Vérifier si la connexion à la DB existe déjà
         g.sqlite_db = sqlite3.connect('hotels.db')  # Ouvrir une nouvelle connexion à la DB
@@ -156,49 +157,61 @@ def get_db_connection():
     return g.sqlite_db  # Retourner la connexion à la DB
 
 
-# ============================
-# 🔧 Fermeture de la connexion à la base de données SQLite
-# ============================
+# 2.2. close_db_connection() → Fermeture automatique
 @app.teardown_appcontext
 def close_db_connection(exception):
     if hasattr(g, 'sqlite_db'):  # Vérifier si la connexion à la DB existe
         g.sqlite_db.close()  # Fermer la connexion à la base de données
 
 
-# ============================
-# 🌐 Routes HTML de base
-# ============================
-# Affiche la page d'accueil
+# =========================================
+# 3. 🌐 Pages HTML visibles
+# =========================================
+
+# 3.1. Affiche la page d'accueil
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# Affiche la page de paiement
+
+# 3.2. Affiche la page de paiement
 @app.route('/paiement')
 def paiement():
     public_key = os.getenv("STRIPE_PUBLIC_KEY")
     return render_template('paiement.html', stripe_public_key=public_key)
 
+
+# 3.3. Affiche la page de réinitialisation du mot de passe
 @app.route("/stripe_config.js")
 def serve_stripe_config():
     return render_template("JS/stripe_config.js.jinja", stripe_public_key=os.getenv("STRIPE_PUBLIC_KEY")), 200, {
         "Content-Type": "application/javascript"
     }
 
+
+# 3.4. Affiche la page de réinitialisation du mot de passe
 @app.route('/resetPassword')
 def reset_password_form():
     return render_template('resetPassword.html')
 
+
+# 3.5. Affiche la page de mes réservations
 @app.route("/mes-reservations")
 def mes_reservations_page():
     return render_template("mesReservations.html")
 
 
+# 3.6. Affiche la page de contact
+@app.route('/contact', methods=['GET'])
+def contact():
+    return render_template("contact.html")
+
+
 # ============================
-# 🏨 Route HTML pour pages dynamiques hotel.html et reservations.html (avec données) 
+# 4. 🏨 Route HTML pour pages dynamiques hotel.html et reservations.html (avec données) 
 # ============================
 
-# Affiche hotel.html avec les filtres et les avis passés depuis index.html
+# 4.1. Affiche hotel.html avec les filtres et les avis passés depuis index.html
 @app.route('/hotel')
 def hotel():
     hotel_id = request.args.get("hotel_id")
@@ -235,7 +248,8 @@ def hotel():
 
     return render_template('hotel.html', reviews=reviews, **filters)
 
-# Affiche la page des réservations avec les infos d'un hôtel, une map interactive et ses avis
+
+# 4.2. Affiche la page de réservation avec les infos d'un hôtel, une map interactive et ses avis
 @app.route('/reservations')
 def reservation():
     hotel = {
@@ -273,9 +287,77 @@ def reservation():
     return render_template('reservations.html', hotel=hotel, reviews=reviews)
 
 
-# ============================
-# 🏨 Gestion de l inscription a la Newsletters 
-# ============================
+# 4.3. Affiche sur la page reservation un hotel par defaut (Le Parisien Luxe)
+@app.route("/api/default-hotel", methods=["GET"])
+def get_default_hotel():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT h.*, c.name AS city_name
+        FROM hotels h
+        JOIN cities c ON h.city_id = c.id
+        WHERE h.name = 'Le Parisien Luxe'
+    """)
+    hotel = cursor.fetchone()
+
+    if not hotel:
+        return jsonify({"error": "Hôtel par défaut non trouvé"}), 404
+
+    # 🔍 Récupérer les avis
+    cursor.execute("""
+        SELECT r.rating, r.comment, r.date_posted, u.first_name, u.name
+        FROM reviews r
+        JOIN user u ON r.user_id = u.id_user
+        WHERE r.hotel_id = ?
+        ORDER BY r.date_posted DESC
+    """, (hotel["id"],))
+    reviews = [{
+        "first_name": review["first_name"],
+        "last_name": review["name"],
+        "rating": review["rating"],
+        "comment": review["comment"],
+        "date_posted": review["date_posted"]
+    } for review in cursor.fetchall()]
+
+    # 🧩 Assemblage
+    result = {
+        "id": hotel["id"],
+        "name": hotel["name"],
+        "stars": hotel["stars"],
+        "rating": hotel["hotel_rating"],
+        "price": hotel["price_per_night"],
+        "address": hotel["address"],
+        "description": hotel["description"],
+        "latitude": hotel["latitude"],
+        "longitude": hotel["longitude"],
+        "image": f"/static/Image/{hotel['image_url']}" if hotel["image_url"] else "/static/Image/default.jpg",
+        "equipments": [
+            equip for equip in [
+                "Parking" if hotel["parking"] else None,
+                "Restaurant" if hotel["restaurant"] else None,
+                "Piscine" if hotel["piscine"] else None,
+                "Animaux admis" if hotel["pets_allowed"] else None,
+                "Salle de sport" if hotel["gym"] else None,
+                "Spa" if hotel["spa"] else None,
+                "Wi-Fi gratuit" if hotel["free_wifi"] else None,
+                "Climatisation" if hotel["air_conditioning"] else None,
+                "Borne recharge" if hotel["ev_charging"] else None,
+                "Accès PMR" if hotel["wheelchair_accessible"] else None,
+                "Machine à laver" if hotel["washing_machine"] else None,
+                "Kitchenette" if hotel["kitchenette"] else None
+            ] if equip is not None
+        ],
+        "reviews": reviews
+    }
+
+    conn.close()
+    return jsonify(result)
+
+
+# =========================================
+# 5. 📧 Newsletter
+# =========================================
 @app.route("/subscribe", methods=["POST"])
 def subscribe():
     email = request.form.get("email")
@@ -320,9 +402,59 @@ def subscribe():
     return redirect("/")
 
 
-# ============================
-# 🔍 Endpoint pour l'autocomplétion des destinations (pour toutes les pages)
-# ============================
+# =========================================
+# 6. 💬 Contact
+# =========================================
+@app.route('/contact', methods=['POST'])
+def contact_post():
+    try:
+        # Récupération des données du formulaire
+        first_name = request.form['first-name']
+        last_name = request.form['last-name']
+        email = request.form['email']
+        phone = request.form['phone']
+        message = request.form['message']
+        subject = request.form['subject']
+
+        # Vérification des données de formulaire
+        if not all([first_name, last_name, email, phone, message]):
+            raise ValueError("Tous les champs doivent être remplis")
+
+        # Envoi du mail au destinataire
+        msg = Message('Nouvelle demande de contact',
+                      recipients=['justdreams06@gmail.com'])
+        msg.body = f'Nom: {first_name} {last_name}\nEmail: {email}\nTéléphone: {phone}\nMessage: {message}\nObjet: {subject}'
+        mail.send(msg)
+
+        # Enregistrement de la demande dans la base de données (table de contact)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO contact_requests (first_name, last_name, email, phone, message, subject, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (first_name, last_name, email, phone, message, subject, 'pending'))
+        conn.commit()
+
+        # Envoi de la réponse automatique à l'utilisateur avec le template HTML
+        auto_reply = Message('Merci pour votre message', recipients=[email])
+        auto_reply.html = render_template("email_templates/confirmationFormulaire.html", first_name=first_name)
+        mail.send(auto_reply)
+
+        # Utilisation de flash et redirection vers l'accueil avec un message
+        flash("Votre message a été envoyé avec succès !", "success")
+        return redirect(url_for('home'))
+
+    except Exception as e:
+        print(f"Erreur lors de l'envoi des emails: {e}")
+        flash("Une erreur est survenue. Veuillez réessayer plus tard.", "error")
+        return redirect(url_for('contact'))
+
+
+# =========================================
+# 6. 🔍 Endpoints de recherche & filtrage
+# =========================================
+
+# 6.1. Autocomplétion pour villes, pays et continents sur toutes les pages
 @app.route("/autocomplete", methods=["GET"])
 def autocomplete():
     query = request.args.get("query", "").lower()
@@ -345,9 +477,7 @@ def autocomplete():
     return jsonify(continent_results + country_results + city_results)
 
 
-# ============================
-# 📦 Récupère tous les hôtels avec leurs données et leurs avis
-# ============================
+# 6.2. Récupération complète des hôtels sur hotel.html
 @app.route('/hotels', methods=['GET'])
 def get_hotels():
     with get_db_connection() as conn:
@@ -414,9 +544,7 @@ def get_hotels():
     return jsonify(hotels)
 
 
-# ============================
-# 🔍 Recherche d'hôtels selon destination, dates, invités (pour toutes les pages)
-# ============================
+# 6.3. Récupération des hotels selon destination, dates, invités (pour toutes les pages)
 @app.route("/recherche", methods=["POST"])
 def recherche_hotels():
     try:
@@ -538,10 +666,9 @@ def recherche_hotels():
     except Exception as e:
         print("Erreur lors de l'exécution SQL :", str(e))
         return jsonify({'error': str(e)}), 500
-
-# ============================
-# 🔍 Filtres avancés sur les hôtels (prix, équipements, etc.) pour la page hotel.html
-# ============================
+    
+    
+# 6.4. Filtres avancés sur les hôtels (prix, équipements, etc.) pour la page hotel.html
 @app.route('/filter_hotels', methods=['POST'])
 def filter_hotels():
     print("🚀 Route '/filter_hotels' appelée !")
@@ -737,9 +864,7 @@ def filter_hotels():
         return jsonify({'error': str(e)}), 500
 
 
-# ============================
-# 💬 Récupère les avis d'un hôtel triés par note ou date
-# ============================
+# 6.5. Récupération des avis d'un hôtel tries par note, date ou ordre alphabétique sur reservations.html
 @app.route('/get_reviews', methods=['GET'])
 def get_reviews():
     """Récupère les avis d'un hôtel donné, triés par date ou par note"""
@@ -784,9 +909,7 @@ def get_reviews():
     return jsonify(reviews)
 
 
-# ============================
-# 🏨 Récupère le nom d'un hôtel à partir de son ID
-# ============================
+# 6.6. Récupération du nom d'un hôtel à partir de son ID sur paiement.html
 @app.route('/get_hotel_name')
 def get_hotel_name():
     hotel_id = request.args.get("hotel_id")
@@ -805,9 +928,7 @@ def get_hotel_name():
         return jsonify({"error": "Hôtel non trouvé"}), 404
     
 
-# ============================
-# 🏨 Récupère le prix par nuit nuit d'un hôtel
-# ============================    
+# 6.7. Récupération du prix par nuit d'un hôtel sur paiement.html
 @app.route('/get_price_per_night/<int:hotel_id>', methods=['GET'])
 def get_price_per_night(hotel_id):
     conn = get_db_connection()
@@ -822,81 +943,18 @@ def get_price_per_night(hotel_id):
         return jsonify({"error": "Hôtel non trouvé"}), 404
 
 
-# ============================
-# 📩 Crée une réservation via API avec données complètes utilisateur
-# ============================
+# =========================================
+# 7. 📦 Réservations & Stripe
+# =========================================
+
+# 7.1. Creation d'une réservation mais pas inseree daans la BDD
 @app.route("/api/reservations", methods=["POST"])
 def create_reservation():
     print("ℹ️ Endpoint /api/reservations appelé mais non utilisé.")
     return jsonify({"message": "Endpoint désactivé. Utilisez Stripe Webhook pour insérer la réservation."}), 200
 
-    # data = request.json
-    # print("📩 Données reçues :", data)  # 🔍 Pour le debug
 
-    # hotel_id = data.get("hotel_id")
-    # checkin = data.get("checkin")
-    # checkout = data.get("checkout")
-    # guests = data.get("guests")
-    # adults = data.get("adults", 1)
-    # children = data.get("children", 0)
-
-    # # 🔽 On récupère les nouveaux champs à insérer
-    # first_name = data.get("first_name")
-    # gender = data.get("gender")
-    # phone = data.get("phone")
-    # stripe_customer_id = data.get("stripe_customer_id")
-    # user_name = data.get("user_name")
-    # email = data.get("email")
-    # user_id = data.get("user_id")
-    # total_price = data.get("total_price")
-
-    # if not hotel_id or not checkin or not checkout or not guests or not adults:
-    #     return jsonify({"error": "Tous les champs sont obligatoires"}), 400
-
-    # try:
-    #     conn = get_db_connection()
-    #     cursor = conn.cursor()
-
-    #     print(f"📝 Tentative de réservation : Hôtel {hotel_id} | {checkin} -> {checkout} | {guests} voyageurs")
-
-    #     now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-
-    #     # Mise à jour de l'insertion pour inclure le user_id
-    #     cursor.execute("""
-    #         INSERT INTO reservations (
-    #             hotel_id, user_id, user_name, email, checkin, checkout, guests, adults, children, 
-    #             first_name, gender, phone, stripe_customer_id, status, created_at, total_price
-    #         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
-    #     """, (
-    #         hotel_id, user_id, user_name, email, checkin, checkout,
-    #         guests, adults, children, first_name, gender, phone, stripe_customer_id, now, total_price
-    #     ))
-
-    #     conn.commit()
-    #     reservation_id = cursor.lastrowid
-    #     conn.close()
-
-    #     print(f"✅ Réservation confirmée (ID: {reservation_id})")
-
-    #     return jsonify({
-    #         "reservation_id": reservation_id,
-    #         "hotel_id": hotel_id,
-    #         "checkin": checkin,
-    #         "checkout": checkout,
-    #         "guests": guests,
-    #         "adults": adults,
-    #         "children": children,
-    #         "total_price": total_price
-    #     })
-
-    # except Exception as e:
-    #     print(f"❌ Erreur lors de la réservation : {str(e)}")
-    #     return jsonify({"error": str(e)}), 500
-    
-
-# ============================
-# 💾 Création d'un webhook Stripe 
-# ============================   
+# 7.2. Création d'un webhook Stripe  
 @app.route("/stripe-webhook", methods=["POST"])
 def stripe_webhook():
     payload = request.data
@@ -1004,10 +1062,9 @@ def stripe_webhook():
         
         return jsonify({'status': 'success'}), 200
     return '', 200
+ 
 
-# ============================
-# 💳 Crée une session de paiement Stripe
-# ============================
+# 7.3. Crée une session de paiement Stripe
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     try:
@@ -1116,9 +1173,11 @@ def create_checkout_session():
         return jsonify({"error": "Erreur serveur : " + str(e)}), 500
 
 
-# ============================
-# ✅ Affiche une page de succès après paiement Stripe
-# ============================
+# =========================================
+# 8. ✅ Pages de confirmation Stripe
+# =========================================
+
+# 8.1. Affiche une page de succès après paiement Stripe
 @app.route('/success')
 def success():
     return """
@@ -1132,9 +1191,8 @@ def success():
     </html>
     """
 
-# ============================
-# ❌ Affiche une page d’échec après annulation Stripe
-# ============================
+ 
+# 8.2. Affiche une page d’échec après annulation Stripe
 @app.route('/cancel')
 def cancel():
     return """
@@ -1149,24 +1207,11 @@ def cancel():
     """
 
 
-# ============================
-# 👤 Route admin pr vois resa "pending supprimées"
-# ============================
-@app.route('/admin/clean-pending', methods=['GET'])
-def admin_clean_pending():
-    deleted = clean_old_pending_reservations()
+# =========================================
+# 9. 👤 Espace utilisateur
+# =========================================
 
-    if deleted == -1:
-        return jsonify({"success": False, "message": "Erreur lors du nettoyage"}), 500
-    return jsonify({
-        "success": True,
-        "message": f"{deleted} réservation(s) 'pending' supprimée(s) avec succès."
-    }), 200
-
-
-# ============================
-# 👤 Affiche les reservations de l utilisateur
-# ============================
+# 9.1. Récupération des réservations d'un utilisateur sur mesReservations.html
 @app.route("/api/mes-reservations/<int:user_id>")
 def get_user_reservations(user_id):
     with sqlite3.connect("hotels.db") as conn:
@@ -1196,9 +1241,8 @@ def get_user_reservations(user_id):
     return jsonify(reservations)
 
 
-# ============================
-# 👤 Annulation des réservations par l'utilisateur
-# ============================
+
+# 9.2. Annulation des réservations par l'utilisateur
 @app.route("/api/reservations/<int:reservation_id>", methods=["DELETE"])
 def cancel_reservation(reservation_id):
     try:
@@ -1275,10 +1319,26 @@ def cancel_reservation(reservation_id):
         return jsonify({"error": str(e)}), 500
 
 
+# =========================================
+# 10. 🧹 Nettoyage automatique des réservations expirées
+# =========================================
 
-# ============================
-# 👤 Supprime les reservations statut "pending" automatiquement au bout de 24h
-# ============================
+# 10.1. Route admin pr vois resa "pending supprimées"
+@app.route('/admin/clean-pending', methods=['GET'])
+def admin_clean_pending():
+    deleted = clean_old_pending_reservations()
+
+    if deleted == -1:
+        return jsonify({"success": False, "message": "Erreur lors du nettoyage"}), 500
+    return jsonify({
+        "success": True,
+        "message": f"{deleted} réservation(s) 'pending' supprimée(s) avec succès."
+    }), 200
+
+
+# =========================================
+# 10. 🧹 Nettoyage automatique des réservations expirées
+# =========================================
 def clean_old_pending_reservations():
     try:
         conn = get_db_connection()

@@ -1,3 +1,47 @@
+// =============================================================
+// 📁 resetPassword.js
+// -------------------------------------------------------------
+// Ce fichier gère l'ensemble de la logique de réinitialisation
+// de mot de passe dans l'application.
+//
+// Il prend en charge :
+// - la demande de lien de réinitialisation (à partir de l'email),
+// - la validation de la robustesse du nouveau mot de passe,
+// - la soumission sécurisée du mot de passe via un token,
+// - le feedback visuel sur les critères de sécurité,
+// - le masquage/affichage dynamique des champs de mot de passe.
+//
+// 🎯 Objectif :
+// Offrir une expérience fluide et sécurisée pour réinitialiser
+// un mot de passe oublié, tout en appliquant des règles strictes
+// de robustesse et de sécurité.
+//
+// 🔐 Fonctionnalités principales :
+// - `resetPassword()`
+//   → Envoie l'email au backend pour générer un lien sécurisé.
+// - Masque/affiche les mots de passe (`togglePasswordVisibility()`).
+// - Vérifie le token présent dans l'URL.
+// - Analyse et affiche la force du mot de passe (avec couleurs, critères...).
+// - Valide la correspondance entre les deux champs.
+// - Envoie la nouvelle valeur au backend (`/submit-new-password`).
+//
+// ✅ Utilise des fonctions de `formValidation.js` pour :
+// - Calculer la robustesse (`getPasswordStrength()`),
+// - Afficher un message dynamique (`updateStrengthDisplay()`),
+// - Colorer le champ (`updatePasswordInputStyle()`),
+// - Activer/désactiver le bouton (`toggleRegisterButton()`),
+// - Mettre à jour les critères (majuscule, chiffre, etc.).
+//
+// 🧩 Utilisé dans :
+// - La page `reset-password.html`
+// - Via le bouton "Mot de passe oublié ?" du formulaire de connexion.
+//
+// ⚠️ Dépend de l'ID `resetForm` dans le HTML
+// ⚠️ Nécessite un token dans l'URL pour fonctionner.
+//
+// =============================================================
+
+
 // ============================
 // 📦 Importations des modules
 // ============================

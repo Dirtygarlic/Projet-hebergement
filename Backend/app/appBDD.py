@@ -153,11 +153,27 @@ def create_tables():
                 );
             ''')
 
+             # Création de la table newsletter_subscriptions
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     email TEXT NOT NULL UNIQUE,
                     subscribed_at TEXT DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+
+            # Création de la table contact_requests
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS contact_requests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                first_name TEXT NOT NULL,
+                last_name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                message TEXT NOT NULL,
+                subject TEXT NOT NULL,
+                status TEXT DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
 

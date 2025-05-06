@@ -1,3 +1,49 @@
+// =============================================================
+// 📁 reviewManager.js
+// -------------------------------------------------------------
+// Ce fichier gère l'affichage visuel, le tri et la pagination
+// des avis clients dans la section "avis" d’une page de réservation.
+//
+// 🎯 Objectif :
+// Afficher dynamiquement les avis d’un hôtel avec un système
+// de pagination et de tri interactif, tout en formattant proprement
+// les informations pour une bonne lisibilité.
+//
+// 🔧 Fonctionnalités principales :
+// - `displayReviews(reviews)` :
+//   → Affiche les avis dans une grille HTML paginée.
+//   → Crée dynamiquement les boutons de tri (date, note, nom).
+//   → Insère les boutons de pagination si nécessaire.
+//
+// - `sortReviews(reviews, criterion)` :
+//   → Trie les avis selon le critère spécifié ("date", "rating", "name").
+//   → Réinitialise la pagination à la page 1.
+//
+// - `setupSortButtons(reviews)` :
+//   → Attache les événements aux boutons de tri pour relancer l’affichage trié.
+//
+// - `formatDate(dateString)` :
+//   → Formatte les dates pour un affichage clair en français.
+//
+// 📦 Pagination :
+// - Affiche 10 avis maximum par page.
+// - Met à jour dynamiquement l’interface lorsqu’un bouton de page est cliqué.
+//
+// 🧩 Dépendances :
+// - Aucun import externe, mais dépend d’un DOM structuré avec :
+//   → un conteneur `#reviews-list`,
+//   → une section `.reviews-section` pour injecter les filtres et la pagination.
+//
+// ⚠️ Ce module est conçu pour fonctionner en complément de :
+// - `reviewLoader.js` (chargement des avis)
+// - `reservationReview.js` (logique d’interaction des tris externes)
+//
+// ✅ Fournit une solution complète pour afficher, trier et paginer
+// les avis clients dans une interface utilisateur agréable.
+// =============================================================
+
+
+
 // ============================
 // ⭐ reviewManager.js
 // ============================
@@ -115,11 +161,6 @@ function setupSortButtons(reviews) {
 }
 
 
-/**
- * Formatte une date pour affichage en français
- * @param {string} dateString 
- * @returns {string}
- */
 function formatDate(dateString) {
     if (!dateString) return "Date inconnue";
 

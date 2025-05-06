@@ -1,3 +1,37 @@
+// =============================================================
+// 📁 uiManager.js
+// -------------------------------------------------------------
+// Ce module centralise la gestion de l’interface utilisateur pour
+// la connexion et l’inscription, avec des effets dynamiques,
+// des formulaires réactifs, et des comportements ergonomiques.
+//
+// 🎯 Objectif :
+// Offrir une navigation fluide entre les modes "Connexion" et
+// "Création de compte", tout en améliorant l’expérience utilisateur
+// grâce à des champs intelligents et une gestion claire des états.
+//
+// 🔧 Fonctions principales :
+// - `switchToCreateAccount()` : Bascule vers le formulaire d’inscription,
+//     initialise les champs, et met en place la vérification de mot de passe.
+// - `switchToLogin()` : Revenir au formulaire de connexion, en masquant l’inscription.
+// - `togglePasswordVisibility(inputId)` : Montre ou cache un champ mot de passe.
+// - `toggleLoginForm()` : Ouvre ou ferme la modale de connexion/inscription.
+//
+// 🧩 Dépendances :
+// - `formValidation.js` pour la robustesse des mots de passe.
+// - `sessionManager.js` pour gérer les données utilisateur affichées.
+// - `resetRegisterForm.js` pour réinitialiser proprement les champs.
+//
+// 📦 Utilisé par :
+// - `index.js` (point d’entrée de la modale login/register)
+// - Formulaires HTML avec les IDs suivants :
+//   → `#loginForm`, `#registerForm`, `#loginModal`, `#overlay`, etc.
+//
+// ✅ Permet une UX moderne, fluide et responsive sur les modales
+// de connexion/inscription, sans rechargement de page.
+// =============================================================
+
+
 // ============================
 // 📦 Importations des modules
 // ============================
@@ -9,7 +43,6 @@ import {
     toggleRegisterButton
 } from './formValidation.js';
 
-import { showUserInfo } from './sessionManager.js';
 import { resetRegisterForm } from './resetRegisterForm.js';
 
 

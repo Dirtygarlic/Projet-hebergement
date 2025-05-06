@@ -1,6 +1,41 @@
-console.log("🎨 Module hotelRender.js chargé !");
+// =============================================================
+// 📁 hotelRender.js
+// -------------------------------------------------------------
+// Ce module gère l’affichage dynamique des résultats hôteliers
+// sur la page `hotel.html`, après une recherche ou un filtrage.
+//
+// 🎯 Objectif :
+// Afficher une liste d’hôtels sous forme de cartes informatives,
+// avec gestion des doublons, rendu visuel propre, et construction
+// du lien vers la page de réservation (`reservations.html`).
+//
+// 🔧 Fonction principale :
+// - `renderHotelsWithReviews(hotels)` :
+//   → Supprime les doublons (même ID) via `Map`,
+//   → Affiche le nombre d’hôtels trouvés,
+//   → Si aucun résultat : montre une alerte visuelle avec un gif,
+//   → Pour chaque hôtel :
+//       • Crée dynamiquement une carte HTML avec les infos :
+//         nom, étoiles, prix, équipements, image, note, etc.
+//       • Génère un lien vers `reservations.html` avec toutes
+//         les infos encodées dans l’URL (hors avis).
+//
+// 🧩 Dépendance :
+// - `fetchHotelReviews()` (importé mais plus utilisé ici pour
+//   passer les avis dans l’URL → logique déplacée côté `reservations.js`)
+//
+// ✅ Avantages :
+// - Séparation claire entre le rendu et la récupération des données,
+// - Plus sécurisé : ne passe plus les avis en URL,
+// - Compatible avec tous les filtres (spécifiques ou globaux).
+//
+// 📦 Utilisé dans :
+// - `hotel.js`, après un appel API pour afficher les résultats.
+//
+// ⚠️ Pour ajouter les avis à l’affichage, penser à les charger
+// dynamiquement dans `reservations.html`, pas depuis ce fichier.
+// =============================================================
 
-import { fetchHotelReviews } from './hotelReview.js';
 
 export async function renderHotelsWithReviews(hotels) {
     console.log("✅ Hôtels filtrés :", hotels);
@@ -33,8 +68,6 @@ export async function renderHotelsWithReviews(hotels) {
         const hotelDiv = document.createElement('div');
         hotelDiv.className = 'hotel col-lg-12 d-flex align-items-center border p-3 mb-3';
 
-        const reviews = await fetchHotelReviews(hotel.id);
-
         const reservationLink = `/reservations?hotel_id=${hotel.id}`
         + `&name=${encodeURIComponent(hotel.name)}`
         + `&stars=${hotel.stars}`
@@ -46,7 +79,6 @@ export async function renderHotelsWithReviews(hotels) {
         + `&description=${encodeURIComponent(hotel.description && hotel.description !== "null" ? hotel.description : "Aucune description disponible")}`
         + `&lat=${hotel.latitude || ""}`
         + `&lng=${hotel.longitude || ""}`
-        + `&reviews=${encodeURIComponent(reviews)}`;
 
         hotelDiv.innerHTML = `
             <div class="hotel-info">

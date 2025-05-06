@@ -1,3 +1,42 @@
+// =============================================================
+// 📁 authUISetup.js (authentification)
+// -------------------------------------------------------------
+// Ce fichier initialise tous les comportements liés à
+// l’interface d’authentification utilisateur dès que le DOM est chargé.
+//
+// 🎯 Objectif :
+// Orchestrer la logique front-end des formulaires de connexion,
+// d’inscription, de validation en temps réel et de mot de passe oublié.
+//
+// 🔧 Fonctionnalités :
+// - `checkLoginOnLoad()` : vérifie si l’utilisateur est déjà connecté
+// - Gère la soumission du formulaire de connexion (`submitLogin`)
+// - Gère la soumission du formulaire d’inscription (`submitRegister`)
+// - Active la validation en temps réel des champs email et téléphone
+// - Active la réinitialisation de mot de passe (`resetPassword`)
+// - Rend accessibles globalement certaines fonctions pour l’UI (modales)
+//
+// 📦 Dépendances :
+// - `formValidation.js` : validation live du téléphone et de l’email
+// - `authHandlers.js` : logique de connexion et inscription
+// - `resetPassword.js` : déclenche le flux de mot de passe oublié
+// - `sessionManager.js` : vérifie et affiche l’état de session
+// - `uiManager.js` : gère les actions de l’interface utilisateur (changement de formulaire, visibilité du mot de passe, etc.)
+//
+// ✅ Avantages :
+// - Centralise toute l’initialisation du système d’authentification
+// - Code propre, modulaire et réutilisable
+// - Expérience utilisateur fluide (pas de rechargement de page)
+//
+// 🧩 À utiliser dans :
+// - `index.html`, `login.html`, ou n’importe quelle page avec modale ou section de connexion
+//
+// ⚠️ Les IDs suivants doivent exister dans le HTML :
+// - `#loginForm`, `#registerForm`, `#register-phone`, `#register-email`, `#forgot-password-button`
+// =============================================================
+
+
+
 // ============================
 // 📦 Importation des modules
 // ============================

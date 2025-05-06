@@ -1,3 +1,40 @@
+// =============================================================
+// 📁 reservationForm.js
+// -------------------------------------------------------------
+// Ce fichier gère la logique du formulaire de réservation d’un hôtel,
+// en contrôlant le nombre total de voyageurs (adultes + enfants),
+// en affichant dynamiquement ce total, en validant les contraintes,
+// puis en redirigeant l’utilisateur vers la page de paiement avec
+// les paramètres nécessaires.
+//
+// 🎯 Objectif :
+// Offrir une interface dynamique et sécurisée pour la réservation
+// d’un hôtel, tout en imposant des règles claires sur la composition
+// du groupe (max 4 adultes, 2 enfants, 6 personnes au total).
+//
+// 🔧 Fonctionnalités :
+// - Calcul automatique du total de voyageurs à chaque changement d’entrée.
+// - Affichage immédiat d’un message d’erreur si les limites sont dépassées.
+// - Validation du formulaire avant envoi :
+//   → vérifie que l’hôtel est sélectionné,
+//   → vérifie que l’utilisateur est connecté,
+//   → vérifie que les champs sont bien remplis.
+// - Construction d’une URL avec tous les paramètres nécessaires
+//   pour rediriger vers la page `paiement.html`.
+//
+// 📦 Données transmises dans l’URL :
+// - ID hôtel, dates, nombre de voyageurs, prénom, email, téléphone, image, etc.
+//
+// 🧩 Dépendances côté HTML :
+// - Un formulaire avec l’ID `reservation-form`
+// - Champs `adults1`, `children1`, `guests`, `checkin`, `checkout`, etc.
+// - Élément pour afficher le total : `#total-guests`
+// - Élément d’erreur : `#error-message`
+//
+// ⚠️ Remarque : cette fonction suppose que certains éléments
+// sont déjà présents dans le `
+
+
 // ============================
 // 📋 reservationForm.js
 // ============================

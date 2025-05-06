@@ -1,0 +1,92 @@
+/* Style général du formulaire de contact */
+.contact-form-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 50px auto; /* Centre le formulaire verticalement et horizontalement */
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Logo centré */
+.contact-form-container .logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Taille et ajustement du logo */
+.contact-form-container .logo img {
+    width: 100px;  /* Ajustez la taille du logo si nécessaire */
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Formulaire */
+.contact-form-container form {
+    width: 100%; /* S'assurer que le formulaire occupe toute la largeur */
+}
+
+/* Pour les champs de saisie */
+.contact-form-container input,
+.contact-form-container select,
+.contact-form-container textarea,
+.contact-form-container button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Agrandir la zone de texte */
+.contact-form-container textarea {
+    height: 200px;
+    resize: vertical;
+}
+
+/* Bouton de soumission */
+.contact-form-container button {
+    background-color: #008CBA;
+    color: white;
+    cursor: pointer;
+}
+
+.contact-form-container button:hover {
+    background-color: #005f75;
+}
+
+/* Ajout d'un style pour le menu déroulant */
+.contact-form-container select {
+    font-size: 16px;
+    padding: 10px;
+}
+
+/* ----------------------------- */
+/* 🔙 LIEN RETOUR ACCUEIL */
+/* ----------------------------- */
+.back-home {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.back-home:hover {
+    text-decoration: underline;
+}
+
+/* Pour les écrans plus petits, on peut ajuster la taille du logo */
+@media (max-width: 600px) {
+    .logo img {
+        width: 80px; /* Réduire la taille sur les petits écrans */
+    }
+}

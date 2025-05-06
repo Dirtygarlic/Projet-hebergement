@@ -1,3 +1,48 @@
+// =============================================================
+// 📁 sessionManager.js
+// -------------------------------------------------------------
+// Ce module gère toute la logique de session utilisateur côté client,
+// notamment la persistance de la connexion, l'affichage dynamique
+// des informations utilisateur dans le menu, et la déconnexion.
+//
+// 🎯 Objectif :
+// Offrir une expérience fluide où l'utilisateur reste connecté
+// entre les rechargements de page, et peut se déconnecter proprement.
+//
+// 🔧 Fonctionnalités :
+// - ✅ `checkLoginOnLoad()`
+//   → Vérifie si un utilisateur est déjà connecté (via `localStorage`),
+//   → Si oui, affiche automatiquement son menu et ses infos.
+//
+// - ✅ `showUserInfo(firstName, name, email, phone, userId)`
+//   → Enregistre les infos utilisateur dans `localStorage`,
+//   → Met à jour dynamiquement le menu utilisateur dans le header,
+//   → Affiche un avatar, nom complet, et un bouton pour se déconnecter.
+//
+// - ✅ `logoutUser()`
+//   → Vide le `localStorage`,
+//   → Réinitialise les champs de login,
+//   → Réaffiche le bouton "Se connecter", cache le menu utilisateur.
+//
+// 👤 Stocke les infos suivantes dans le localStorage :
+// - `user_id`, `first_name`, `name`, `email`, `phone`
+//
+// 🧩 Utilisé dans :
+// - `index.js` (au chargement global),
+// - `authHandlers.js` (après login / inscription),
+// - `header`, `paiement.html`, `reservations.html`, etc.
+//
+// ⚠️ Prérequis HTML :
+// - Un bouton `#loginButton` pour la connexion,
+// - Un conteneur `#user-menu-container` + menu déroulant `#user-dropdown`,
+// - Un lien `#logout-link` pour la déconnexion,
+// - Un bouton menu `#user-menu-button`,
+// - Un élément `#user-fullname` pour le nom affiché.
+//
+// ✅ Fournit une gestion simple et fiable de l’état connecté/déconnecté.
+// =============================================================
+
+
 // ============================
 // ♻️ Connexion persistante au rechargement
 // ============================

@@ -1,3 +1,39 @@
+// =============================================================
+// 📁 resetRegisterForm.js
+// -------------------------------------------------------------
+// Ce fichier contient une fonction unique qui réinitialise
+// complètement le formulaire d'inscription utilisateur.
+//
+// 🎯 Objectif :
+// Fournir un moyen propre et centralisé de réinitialiser tous
+// les champs et les états visuels associés au formulaire
+// d'inscription après soumission réussie, changement d'utilisateur,
+// ou fermeture de la modale.
+//
+// 🔧 Fonctionnalités :
+// - Vide tous les champs texte : nom, prénom, téléphone, email, mot de passe.
+// - Cache les messages d'erreur (email et téléphone).
+// - Réinitialise la zone d'affichage de robustesse du mot de passe.
+// - Désactive le bouton "Valider" du formulaire.
+// - Supprime les couleurs de style sur le champ mot de passe.
+// - Remet à zéro les critères de validation (longueur, majuscule, etc.).
+//
+// ✅ Appelé automatiquement après une inscription réussie
+// ou manuellement lors d’un reset utilisateur.
+//
+// 🧩 Utilisé dans :
+// - Le module `authHandlers.js`
+// - La gestion de l’interface utilisateur (`uiManager.js`)
+// - Tout contexte où le formulaire d'inscription doit être vidé.
+//
+// ⚠️ Ce fichier suppose que les éléments HTML suivants sont présents :
+// - Champs `register-name`, `register-email`, etc.
+// - `#password-criteria`, `#password-strength-text`
+// - `#register-submit`, `#phone-error`, `#email-error`, etc.
+//
+// =============================================================
+
+
 // ============================
 // 🧼 Réinitialisation du formulaire d'inscription
 // ============================

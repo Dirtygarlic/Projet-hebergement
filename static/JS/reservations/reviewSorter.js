@@ -1,3 +1,32 @@
+// =============================================================
+// 📁 reviewSorter.js
+// -------------------------------------------------------------
+// Ce fichier contient une fonction utilitaire dédiée au tri
+// d’un tableau d’avis clients selon un critère donné,
+// **sans effectuer l’affichage** (logique pure).
+//
+// 🎯 Objectif :
+// Séparer la logique de tri de celle d’affichage pour garder
+// un code plus modulaire, réutilisable et testable.
+//
+// 🔧 Fonctionnalité :
+// - `sortReviewsOnly(reviews, criterion)` :
+//   → Trie un tableau d’avis en fonction du critère fourni :
+//      • "date" : du plus récent au plus ancien,
+//      • "rating" : du mieux noté au moins bien noté,
+//      • "name" : ordre alphabétique des prénoms.
+//   → Ne modifie **pas** le tableau original (`.sort()` est fait sur une copie).
+//   → Retourne un nouveau tableau trié.
+//
+// ✅ Ce fichier est utilisé par d’autres modules comme
+// `reservationReview.js` pour déléguer le tri des avis,
+// tout en conservant l’affichage dans `reviewManager.js`.
+//
+// 🧩 Avantage : rend la logique de tri indépendante de l’interface.
+// =============================================================
+
+
+
 // ============================
 // 🧮 reviewSorter.js
 // ============================

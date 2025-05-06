@@ -1,193 +1,173 @@
 // ============================
-// 📑 reservations.js (modulaire)
+// 📑 reservations.js – Point d’entrée page réservation
 // ============================
-// Ce fichier est le point d'entrée principal pour la page de réservation.
-// Il orchestre :
-// - la récupération des données d'hôtel et avis via l'URL,
-// - le rendu de la carte et des marqueurs,
-// - le formulaire de réservation et sa validation,
-// - l'affichage paginé des avis clients,
-// - les tris dynamiques,
-// - les appels API pour récupérer les autres hôtels et les avis.
+// Ce fichier orchestre :
+// - la récupération des données de l’hôtel via l’URL,
+// - le chargement des avis (API),
+// - l’affichage de la carte et des marqueurs,
+// - le formulaire de réservation (avec validation),
+// - l'affichage paginé + trié des avis clients,
+// - la gestion de la session utilisateur.
 //
-// Chaque logique métier est déléguée à un module JS propre et clair. 🧩
-
+// Chaque responsabilité est déléguée à un module JS dédié. 🧩
 
 /*
 JS/
 ├── reservations.js             # Point d'entrée principal
 └── reservations/               # Modules organisés
-    ├── urlUtils.js             # 🔍 Récupération des paramètres URL + reviews
+    ├── urlUtils.js             # 🔍 Lecture des paramètres URL
     ├── reviewManager.js        # ⭐ Affichage + pagination des avis
-    ├── reviewSorter.js         # 🔃 Tri pur et réutilisable des avis
-    ├── reservationReview.js    # 🧠 Écouteurs DOM des tris dynamiques
+    ├── reviewSorter.js         # 🔃 Tri pur
+    ├── reservationReview.js    # 🧠 Listeners des tris
     ├── reviewLoader.js         # 📡 Appel API /get_reviews
-    ├── reservationMap.js       # 🗺️ Carte, marqueurs, update info hôtel
-    ├── mapLoader.js            # 🏨 Chargement des autres hôtels (carte)
-    ├── reservationForm.js      # 📋 Formulaire réservation + paiement
+    ├── reservationMap.js       # 🗺️ Carte + hôtel sélectionné
+    ├── mapLoader.js            # 🏨 Chargement des autres hôtels
+    ├── reservationForm.js      # 🧾 Réservation + redirection paiement
     ├── reservationDateLogic.js # 📅 Logique checkin/checkout
-    ├── datePickerValidator.js  # 📆 Validation native du champ date HTML
     ├── formValidator.js        # ✉️📞 Validation email/téléphone
+    ├── sessionManager.js       # 🔒 Session utilisateur
+    └── reservationInit.js      # 🧭 Init carte + markers initiaux
 */
 
-/* 🧭 Table des matières du fichier reservations.js :
-1. 🔍 Récupération des données URL + avis
-2. 📋 Préremplissage formulaire
-3. ✉️ Validation email / téléphone
-4. 📝 Affichage initial des avis (triés par note dès le départ)
-5. 🏨 Construction de l’objet hôtel
-6. 🗺️ Carte interactive
-7. 📡 Chargement des avis depuis API
-8. 🏨 Chargement des autres hôtels (carte)
-9. 📊 Ajout des écouteurs de tri
-10. 🧾 Réservation + redirection paiement
-11. 📅 Gestion des dates checkin/checkout
-12. 🔒 Empêche le zoom carte pendant la saisie dans un champ
+/* 🧭 Table des matières :
+0. 🔍 Importation des modules
+1. 🔗 Update URL dynamique
+2. 🚀 DOMContentLoaded async
+    2.1 Préremplissage formulaire
+    2.2 Validation email/téléphone
+    2.3 Chargement des avis (API)
+    2.4 Chargement hôtel + carte
+    2.5 Formulaire + date
+    2.6 Initialisation carte + autres hôtels
+    2.7 Sécurité : empêche zoom Leaflet
 */
-
 
 // ============================
 // 0. 🔍 Importation des modules
 // ============================
 
-// 🔍 Données URL + reviews
 import { getParamsAndReviews } from './reservations/urlUtils.js';
-
-// ⭐ Affichage + tri des avis
+import { initReservations } from './reservations/reservationInit.js';
 import { displayReviews } from './reservations/reviewManager.js';
-import { sortReviewsOnly } from './reservations/reviewSorter.js'; // ✅ pour tri séparé
 import { setupReviewSorting } from './reservations/reservationReview.js';
-
-// 📡 API
 import { loadReviews } from './reservations/reviewLoader.js';
-
-// 🗺️ Carte et données hôtel
 import {
-  createMap,
-  addHotelMarker,
-  updateHotelInfo,
-  getHotelData
+    createMap,
+    addHotelMarker,
+    updateHotelInfo,
+    getHotelData
 } from './reservations/reservationMap.js';
 import { initReservationMap } from './reservations/mapLoader.js';
-
-// 📋 Formulaire réservation
 import { setupReservationForm } from './reservations/reservationForm.js';
-
-// 📅 Dates + validation
 import { setupDateValidation } from './reservations/reservationDateLogic.js';
-import { setupCheckinCheckoutValidation } from './reservations/datePickerValidator.js';
 import { validateEmailPhoneFields } from './reservations/formValidator.js';
-
-// Session gardee
 import { checkLoginOnLoad } from './authentification/sessionManager.js';
 
+// ============================
+// 1. 🔗 Met à jour dynamiquement l’URL
+// ============================
+export function updateHotelInURL(hotel) {
+    const url = new URL(window.location);
 
-document.addEventListener("DOMContentLoaded", () => {
+    url.searchParams.set("hotel_id", hotel.id);
+    url.searchParams.set("name", hotel.name);
+    url.searchParams.set("stars", hotel.stars);
+    url.searchParams.set("rating", hotel.rating);
+    url.searchParams.set("equipments", hotel.equipments.join(","));
+    url.searchParams.set("price", hotel.price);
+    url.searchParams.set("image", hotel.image);
+    url.searchParams.set("address", hotel.address);
+    url.searchParams.set("description", hotel.description);
+    url.searchParams.set("lat", hotel.latitude);
+    url.searchParams.set("lng", hotel.longitude);
+
+    console.log("🔗 URL mise à jour :", url.href);
+    window.history.pushState({}, "", url);
+}
+
+// ============================
+// 2. 🚀 Chargement principal
+// ============================
+document.addEventListener("DOMContentLoaded", async () => {
     checkLoginOnLoad();
-    
-    console.log("🚀 reservations.js chargé et DOM prêt !");
+    console.log("🚀 reservations.js chargé");
 
-    // ============================
-    // 1. 🔍 Récupération des données URL + avis
-    // ============================
-    const { params, reviews } = getParamsAndReviews();
-    console.log("🔍 Paramètres récupérés :", Object.fromEntries(params.entries()));
-    console.log("🔍 Reviews après décodage :", reviews);
+    const { params } = getParamsAndReviews();
 
-    // ============================
-    // 2. 📋 Préremplissage formulaire
-    // ============================
+    // 🔁 Si aucun hôtel, charger celui par défaut
+    if (!params.get("hotel_id")) {
+        console.log("📭 Aucun hôtel dans l'URL, chargement par défaut...");
+        try {
+            const response = await fetch("/api/default-hotel");
+            const defaultHotel = await response.json();
+
+            updateHotelInfo(defaultHotel);
+            addHotelMarker(defaultHotel, updateHotelInURL);
+            displayReviews(defaultHotel.reviews || []);
+            createMap(defaultHotel.latitude, defaultHotel.longitude);
+            initReservations(defaultHotel);
+            initReservationMap(updateHotelInfo, loadReviews);
+        } catch (error) {
+            console.error("❌ Erreur lors du chargement de l'hôtel par défaut :", error);
+        }
+        return;
+    }
+
+    console.log("🔍 Paramètres URL :", Object.fromEntries(params.entries()));
+
+    // 2.1 📋 Préremplissage formulaire
     const fieldMapping = {
         "first-name": "first_name",
-        "user_name": "name", // 🧠 correspondance propre
+        "user_name": "name",
         "email": "email",
         "phone": "phone"
     };
-    
+
     Object.entries(fieldMapping).forEach(([fieldId, storageKey]) => {
         const field = document.getElementById(fieldId);
         const value = localStorage.getItem(storageKey);
         if (field && value) {
-            field.value = storageKey === "phone" ? value.replace(/[^0-9]/g, "") : value;
+            field.value = storageKey === "phone" ? value.replace(/\D/g, "") : value;
         }
     });
 
-    // ============================
-    // 3. ✉️ Validation email / téléphone
-    // ============================
+    // 2.2 ✉️ Validation email / téléphone
     validateEmailPhoneFields();
 
-    // ============================
-    // 4. 📝 Affichage initial des avis (triés par note dès le départ)
-    // ============================
-    const sortedByRating = sortReviewsOnly(reviews, "rating");
-    displayReviews(sortedByRating);
+    // 2.3 📝 Avis (API) triés par note
+    const hotelId = params.get("hotel_id");
+    if (hotelId) {
+        const apiReviews = await loadReviews(hotelId, "rating");
+        displayReviews(apiReviews);
+        setupReviewSorting(apiReviews);
+    }
 
-    // ============================
-    // 5. 🏨 Construction de l’objet hôtel
-    // ============================
+    // 2.4 🏨 Hôtel + Carte
     const hotel = getHotelData(params);
-    console.log("✅ Hôtel chargé :", hotel);
     updateHotelInfo(hotel);
 
-    // ============================
-    // 6. 🗺️ Carte interactive
-    // ============================
     if (!window.map) {
-        console.log("🗺️ Création de la carte...");
         createMap(hotel.latitude, hotel.longitude);
     } else {
         window.map.setView([hotel.latitude, hotel.longitude], 12);
     }
 
-    addHotelMarker(hotel, updateHotelInfo, loadReviews);
+    initReservations(hotel);
 
-    // ============================
-    // 7. 📡 Chargement des avis depuis API si absents
-    // ============================
-    const hotelId = params.get("hotel_id");
-    if (!reviews.length && hotelId) {
-        loadReviews(hotelId, "date");
-    }
-
-    // ============================
-    // 8. 🏨 Chargement des autres hôtels pour la carte
-    // ============================
+    // 2.5 📋 Formulaire + 📅 dates
+    setupReservationForm();
+    setupDateValidation();
+    
+    // 2.6 🗺️ Autres hôtels (carte)
     initReservationMap(updateHotelInfo, loadReviews);
 
-    // ============================
-    // 9. 📊 Ajout des écouteurs de tri (après chargement du DOM)
-    // ============================
-    setTimeout(() => {
-        setupReviewSorting(reviews);
-    }, 1000);
-
-    // ============================
-    // 10. 🧾 Réservation + redirection paiement
-    // ============================
-    setupReservationForm();
-
-    // ============================
-    // 11. 📅 Gestion des dates checkin/checkout
-    // ============================
-    setupDateValidation();
-    setupCheckinCheckoutValidation();
-
-    // ============================
-    // 12. 🔒 Empêche le zoom carte pendant la saisie dans un champ
-    // ============================
+    // 2.7 🔒 Empêche zoom carte pendant saisie
     document.addEventListener("keydown", function (event) {
-        const activeElement = document.activeElement;
-        const isInputFocused = activeElement && (
-            activeElement.tagName === "INPUT" ||
-            activeElement.tagName === "TEXTAREA" ||
-            activeElement.tagName === "SELECT" ||
-            activeElement.isContentEditable
+        const el = document.activeElement;
+        const isFormInput = el && (
+            el.tagName === "INPUT" || el.tagName === "TEXTAREA" ||
+            el.tagName === "SELECT" || el.isContentEditable
         );
-
-        if (isInputFocused) {
-            event.stopPropagation(); // Empêche Leaflet de capter la touche
-        }
+        if (isFormInput) event.stopPropagation();
     }, true);
 });
-

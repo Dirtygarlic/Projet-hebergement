@@ -1,2 +1,16 @@
 # Ignore .env file
 securite_mdp.env
+
+# Mac OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Bases de données locales
+*.db
+
+# Dossiers Jetables
+instance/
+.env

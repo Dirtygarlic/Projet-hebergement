@@ -17,26 +17,25 @@ body {
 /* ===================================================== */
 /* 🔝 1. HEADER (Logo + Connexion /inscription + Langue) */
 /* ===================================================== */
-header {
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    flex-wrap: wrap;
+    padding: 20px;
     background-color: #f0f0f0;
+    width: 100%;
+    margin: 0 auto;
 }
 
 /* 🖼️ Logo */
-.image2 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 120px;
+.logo img {
+    width: 100px; /* Ajustez la taille du logo */
     border-radius: 10px;
 }
 
 /* 🔐 Bouton : Se connecter / S'inscrire */
-.search-button1 {
-    padding: 10px 15px;
+.auth-buttons{
     background-color: rgb(230, 220, 212);
     color: rgb(146, 174, 201);
     font-size: 20px;
@@ -44,6 +43,7 @@ header {
     border: none;
     box-shadow: 1px 1px 1px black;
     cursor: pointer;
+    margin-left: auto;
 }
 
 #user-menu-container {
@@ -52,33 +52,37 @@ header {
 }
   
 #user-menu-button {
-background-color: #f0f0f0;
-border: none;
-padding: 10px;
-font-weight: bold;
-cursor: pointer;
+    background-color: #f0f0f0;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 #user-dropdown {
-position: absolute;
-right: 0;
-background-color: white;
-border: 1px solid #ccc;
-padding: 10px;
-min-width: 180px;
-box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
-z-index: 1000;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    min-width: 180px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
 }
 
 #user-dropdown a {
-display: block;
-text-decoration: none;
-padding: 8px;
-color: black;
+    display: block;
+    text-decoration: none;
+    padding: 8px;
+    color: black;
 }
 
 #user-dropdown a:hover {
-background-color: #f5f5f5;
+    background-color: #f5f5f5;
+}
+
+#user-menu-container {
+    margin-left: 30px; /* Ajout d'un espace à gauche du menu utilisateur */
 }
 
 .hidden {
@@ -94,6 +98,19 @@ display: none;
     vertical-align: middle;
   }  
 
+  .search-button1 {
+    padding: 10px 15px;
+    background-color: rgb(230, 220, 212);
+    color: rgb(146, 174, 201);
+    font-size: 20px;
+    border-radius: 4px;
+    border: none;
+    box-shadow: 1px 1px 1px black;
+    cursor: pointer;
+    width: 100%; /* Prend toute la largeur disponible */
+    text-align: center; /* Centrer le texte */
+}
+
 /* 🎯 Effet au survol des boutons */
 .search-button1:hover,
 .search-button2:hover {
@@ -103,7 +120,8 @@ display: none;
 
 /* 🌐 Bouton de sélection de langue */
 .dropbtn {
-    background-color: #4CAF50;
+    /* background-color: #4CAF50;*/
+    background-color: #008CBA;
     color: white;
     padding: 10px;
     border: none;
@@ -114,7 +132,6 @@ display: none;
 
 /* 📂 Conteneur dropdown langue */
 .dropdown {
-    margin-right: 50px;
     position: relative;
     display: inline-block;
 }
@@ -360,6 +377,9 @@ input.invalid {
     justify-content: center;
     align-items: center;
     height: 60px;
+    flex-wrap: wrap;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .search-fields-container {
@@ -376,8 +396,9 @@ input.invalid {
     color: rgb(146, 174, 201);
     border: 4px solid rgb(146, 174, 201);
     width: 220px;
+    min-width: 150px;
+    box-sizing: border-box;
     margin: 0;
-    outline: none;
 }
 
 .search-input3 {
@@ -526,7 +547,6 @@ input.invalid {
     display: none;
 }
 
-
 /* ===================================================== */
 /* 🖼️ 5. IMAGE DE FOND + TITRE                          */
 /* ===================================================== */
@@ -534,7 +554,7 @@ input.invalid {
     background-image: url("../Image/justDreams.png");
     background-size: cover;
     background-position: center;
-    height: 60.2vh;
+    height: 58.5vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -544,6 +564,12 @@ input.invalid {
     text-align: center;
     position: relative;
     z-index: 1;
+}
+
+.background-wrapper {
+    background-color: #f0f0f0 !important;
+    background-color: #f0f0f0;
+    border: 1px solid transparent;
 }
 
 h1 {
@@ -629,101 +655,753 @@ h3 {
 /* 📱 7. RESPONSIVE DESIGN (mobile/tablette)             */
 /* ===================================================== */
 /* -------- 📐 Grands écrans jusqu'à 1024px -------- */
-@media (max-width: 1024px) {
-    .background-image {
-        height: 40vh;
-    }
+@media (min-width: 768px) and (max-width: 1024px) {
 
-    .button-bar {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 0;
-        transition: all 0.3s ease;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .button-bar.open {
-        display: block;
-        height: 100vh;
-    }
-
-    .button-mobile {
-        display: block;
-    }
-}
-
-/* -------- 🖥️ Moyens écrans jusqu'à 768px -------- */
-@media (max-width: 768px) {
-    header,
-    .footer-content,
-    .button-bar {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .button-bar {
-        padding: 5px;
-    }
-
-    .nav-button {
-        font-size: 11px;
-        margin: 5px 0;
-        padding: 8px 15px;
-    }
-
-    .search-button1 {
-        font-size: 18px;
-    }
-
-    h1 {
-        font-size: 2em;
-    }
-
-    .p1 {
-        font-size: 1.2em;
-    }
-}
-
-/* -------- 📱 Petits écrans jusqu'à 480px -------- */
-@media (max-width: 480px) {
+    /* Arrière-plan de l'image */
     header {
-        flex-direction: column;
-        padding: 5px 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #f0f0f0;
+        font-size: 12px;
     }
 
     .background-image {
-        height: 30vh;
+        background-image: url("../Image/justDreams.png");
+        background-size: cover;
+        background-position: center center;
+        height: 50vh; /* Ajuster la hauteur pour l'image */
+    }
+
+    /* Logo à gauche en haut */
+    .image2 {
+        display: block;
+        height: 75px; /* Ajustez selon la taille du logo */
+        margin-left: 0;
+        margin-top: 10px; /* S'assurer qu'il est collé à gauche */
+    }
+
+    /* Bouton Se connecter / S'inscrire */
+    .search-button1 {
+        padding: 6px 6px;
+        margin-left: 10px;
+        margin-right:10px ;
+        font-size: 12px; /* Laisser le bouton s'adapter à son contenu */
+        box-sizing: border-box;
+    }
+
+    /* Disposition des champs de recherche (destination, dates, adultes/enfants) */
+    .search-fields-container {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0px; /* Espacement entre les champs */
+        font-size: 12px;
+    }
+
+    .search-input3, .search-input4, .search-input5 {
+        width: 100%; /* Ajuster pour tenir dans 100% */
+        font-size: 12px;
+        padding: 6px 17px;
+        gap:0px;
+    }
+
+    .search-button2{
+        width: 21%; /* Ajuster pour tenir dans 100% */
+        font-size: 14px;
+        padding: 5px 17px;
+    }
+
+    /* Bouton de langue */
+    .dropdown {
+        display: inline-block;
+        width: 5%;
+        margin-right: 4px;
+        margin-left:10px;
+    }
+
+    .dropbtn {
+        margin-left: 0px;
+        padding: 6px 6px;
+        font-size: 12px;
+    }
+
+    /* Suppression du bouton mobile et retour de la barre de navigation */
+    .button-mobile {
+        display: none; /* Masquer le bouton mobile */
+    }
+
+    .button-bar {
+        display: flex; /* Afficher la barre de navigation */
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        background-color: #f0f0f0;
+        padding: 10px 0;
+        border-top: 2px solid #ccc;
     }
 
     .nav-button {
-        font-size: 10px;
-        padding: 6px 10px;
+        padding: 10px 20px;
+        margin: 0px 5px;
+        background-color: rgb(230, 220, 212);
+        color: #333;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 1px 1px 1px black;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .nav-button:hover {
+        background-color: rgb(146, 174, 201);
+        color: white;
+    }
+
+    /* Styles pour les éléments du footer */
+    .footer-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 10px 20px;
+        text-align: center;
+        font-size: 12px;
+        margin-bottom:-20px;
+    }
+
+    .contact-info {
+        flex: 1 1 100%;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .useful-links, .social-media {
+        flex: 1 1 48%; /* Les liens utiles et réseaux sociaux côte à côte */
+        max-width: 48%;
+        padding: 5px;
+        margin: 5px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .newsletter {
+        flex: 1 1 100%;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .newsletter h3 {
+        margin-bottom: 20px;
+    }
+
+    .search-form6 {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .search-input6 {
+        padding: 10px;
+        font-size: 12px;
+        width: 250px;
+        border: 1px solid #ccc;
+        border-radius: 5 0 0 5px;
+    }
+
+    .search-button6 {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 0 5 5 0px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        background-color: rgb(230, 220, 212);
+        color: rgb(146, 174, 201);
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .search-button6:hover {
+        background-color: #0056b3;
+    }
+
+    /* Supprimer les puces dans les listes */
+    .footer-content ul {
+        list-style: none;  /* Supprimer les puces */
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Optionnel : Si vous voulez également réduire les espacements entre les éléments de la liste */
+    .footer-content ul li {
+        margin-bottom: 2px; /* Ajustez l'espacement entre les éléments de la liste si nécessaire */
+    }
+
+    .footer-bottom {
+        font-size: 12px;
+    }
+}
+
+/* -------- 🖥️ Moyens écrans (481px à 768px) -------- */
+@media (min-width: 481px) and (max-width: 767px) {
+
+    header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 20px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .image2 {
+        height: 90px;
+    }
+
+    .background-image {
+        margin-top: 80px;
+        padding-top: 30px;
+        height: 40vh;
+        transition: all 0.3s ease-in-out;
+    }
+
+     /* Ajuster la taille du texte dans l'image */
+     .background-image h1 {
+        font-size: 2em; /* Réduire la taille du titre */
+    }
+
+    .background-image .p1 {
+        font-size: 1.2em; /* Réduire la taille du sous-titre */
     }
 
     .search-button1 {
         font-size: 16px;
-        padding: 8px 10px;
+        padding: 10px 14px;
+        position: relative;
+        margin-right: 150px;
+        margin-top: -60px;
+        gap:20ox;
+        z-index: 10;
     }
 
-    h1 {
-        font-size: 1.5em;
+    .dropdown {
+        position: absolute;
+        top: 145px;
+        right: -30px;
+        z-index: 4;
     }
 
-    .p1 {
-        font-size: 1em;
-    }
-
-    .footer-content {
-        align-items: center;
-        text-align: center;
+    .dropbtn {
+        padding: 14px 18px;
+        font-size: 16px;
     }
 
     .button-mobile {
+        position: absolute;
+        background-color: #4CAF50;
+        top: 145px;
+        left: 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        color:white;
+        border:none;
+        padding: 14px 20px;
+        display: block;
+        box-shadow: 1px 1px 1px black;
+        z-index: 4;
+        cursor: pointer;
+    }
+
+    .mobile-menu button:hover {
+        background-color: #45a049; /* Effet au survol */
+    }
+
+    .button-bar {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 50vw;
+        background-color: rgba(255,255,255,0.25);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 4px 4px 20px rgba(0,0,0,0.2);
+        gap:10px;
+        border-radius: 0 20px 20px 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        padding: 10px 10px;
+        transform: translateX(-100%);
+        opacity: 0;
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        z-index: 999;
+    }
+
+    .button-bar.open {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    .reservation-container2 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 40px;
+        padding: 0;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+    }
+
+    .search-fields-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        width: 50%;
+        max-width: 400px;
+        min-width: 280px;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+    .search-fields-container > * {
+        width: 100%;
+    }
+
+    .search-input3,
+    .search-input4,
+    .search-input5,
+    .search-button2 {
+        width: 100%;
+        padding: 14px;
         font-size: 14px;
-        padding: 8px 12px;
+        box-sizing: border-box;
+    }
+
+    .search-input3 {
+        border-radius: 4px 4px 0 0 !important;
+    }
+
+    .search-input4,
+    .search-input5 {
+        border-radius: 0 !important;
+    }
+
+    .search-button2 {
+        border-radius: 0 0 4px 4px !important;
+    }
+
+    .autoComplete,
+    .date-picker-container,
+    .people-selector {
+        width: 100%;
+    }
+
+    .flatpickr-calendar {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+
+    .people-selector {
+        position: relative;
+        width: 100%;
+    }
+
+    #peopleDropdown {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 0 0 4px 4px;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        box-sizing: border-box;
+        font-size: 14px;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .footer-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 10px 20px;
+        text-align: center;
+        border:none;
+    }
+
+    .contact-info {
+        flex: 1 1 100%;
+        text-align: center;
+        margin-bottom: 20px;
+        border:none;
+    }
+
+    .useful-links,
+    .social-media {
+        flex: 1 1 48%;
+        max-width: 48%;
+        padding: 5px;
+        margin: 5px;
+        box-sizing: border-box;
+        text-align: center;
+        border:none;
+    }
+
+    .newsletter {
+        flex: 1 1 100%;
+        text-align: center;
+        margin-top: 20px;
+        border:none;
+    }
+
+    .newsletter h3 {
+        margin-bottom: 10px;
+    }
+
+    .search-form6 {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        border:none;
+    }
+
+    .search-input6 {
+        padding: 12px;
+        font-size: 14px;
+        width: 250px;
+        border: 1px solid #ccc;
+        border-radius: 5 0 0 5px;
+    }
+
+    .search-button6 {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 0 5 5 0px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        background-color: rgb(230, 220, 212);
+        color: rgb(146, 174, 201);
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .search-button6:hover {
+        background-color: #0056b3;
+    }
+
+    .footer-content ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border:none;
+    }
+
+    .footer-content ul li {
+        margin-bottom: 8px;
+    }
+
+    .footer-content h3 {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .footer-content a {
+        font-size: 14px;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+        cursor: pointer;
+        text-align: center;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus,
+    button:focus {
+        outline: none;
+        box-shadow: none;
+        caret-color: transparent;
+    }
+
+    input:hover,
+    select:hover,
+    textarea:hover,
+    button:hover {
+        background-color: #f5f5f5;
     }
 }
 
+
+/* -------- 📱 Petits écrans jusqu'à 480px -------- */
+@media (max-width: 480px) {
+
+    /* Div de l Header */
+    .header-container {
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+        height: 50vh;
+    }
+
+    /* Div de l image logo */
+    .logo {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        margin-top: -120px;
+        height:80px;
+    }
+
+    /* Class de l image du logo */
+    .image2 {
+        height: 80px;
+        max-width: 100px;
+        z-index: 2;
+    }
+        
+    /* Div Auth Button (connexion/inscription) */
+    .auth-buttons{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 10px;
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+    }
+
+    /* Auth Button (connexion/inscription) */
+    
+    .search-button1 {
+        font-size: 14px;
+        text-align: center;
+        padding: 8px 16px;
+        width: 100%;           /* plus 100% */
+        max-width: 200px;      /* limite la taille */
+        border-radius: 4px;
+    }
+    
+    /* Recherche Button */
+    .search-button2 {
+        font-size: 14px;
+        padding: 6px 2px;
+        width: 65%;
+        text-align: center;
+        margin-top:10px;
+        border-radius: 4px;
+    }
+
+    /* Div regroupant les # boutons input Search Fields */
+    .search-fields-container {
+        width: 100%;
+        max-width: 450px;
+        margin: 10px auto 0 auto;
+        flex-direction: column;
+    }
+
+    /* Input Fields */
+    .search-input3,
+    .search-input4,
+    .search-input5 {
+        width: 100%;
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .search-input3 {
+        border-radius: 8px 8px 0 0 !important;
+    }
+
+    .search-input5 {
+        border-radius: 0 0 8px 8px !important;
+    }
+
+    /* Div bouton langue */
+    .dropdown {
+        position: absolute;
+        top: 25px;
+        right: 20px;
+        z-index: 4;
+    }
+     /* Class bouton langue */
+    .dropbtn {
+        padding: 8px 12px;
+        font-size: 16px;
+    }
+
+    /* Background Image */
+    .background-image {
+        height: 240px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .background-image h1 {
+        font-size: 1.8em;
+    }
+
+    .background-image .p1 {
+        font-size: 1.2em;
+    }
+
+    /* Footer */
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 20px;
+    }
+
+    .footer-content > div {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .contact-info {
+        flex: 1 1 100%;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .footer-content ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-content ul li {
+        margin-bottom: 8px;
+    }
+
+    .footer-content h3 {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .footer-content a {
+        font-size: 14px;
+    }
+
+    .newsletter {
+        flex: 1 1 100%;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .useful-links,
+    .social-media {
+        flex: 1 1 100%;      /* prenne toute la largeur */
+        max-width: 100%;     /* enlève la limite de 160px */
+        padding: 0px;
+        margin: 0px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    /* Class bouton menu navigation */
+    .button-mobile {
+        position: absolute;
+        background-color: #4CAF50;
+        top: 25px;
+        left: 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        display: block;
+        box-shadow: 1px 1px 1px black;
+        z-index: 4;
+        cursor: pointer;
+    }
+
+    .mobile-menu button:hover {
+        background-color: #45a049; /* Effet au survol */
+    }
+
+    /* Background Wrapper */
+    .background-wrapper {
+        background-color: #f0f0f0 !important;
+    }
+
+    /* Button Bar for Mobile */
+    .button-bar {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 50vw;
+        background-color: rgba(255,255,255,0.25);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 4px 4px 20px rgba(0,0,0,0.2);
+        gap:10px;
+        border-radius: 0 20px 20px 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        padding: 10px 10px;
+        transform: translateX(-100%);
+        opacity: 0;
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        z-index: 999;
+    }
+
+    .button-bar.open {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    /* People Selector */
+    .people-selector {
+        position: relative;
+        width: 100%;
+    }
+
+    #peopleDropdown {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 0 0 4px 4px;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        box-sizing: border-box;
+        font-size: 14px;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    /* Flatpickr Calendar */
+    .flatpickr-calendar {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+}

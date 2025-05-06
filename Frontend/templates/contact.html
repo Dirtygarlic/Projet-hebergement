@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="keywords" content="réservation, voyage, hôtel, vol, voiture, bateau, restaurant, JustDreams, séjour, vacances">
+        <meta name="description" content="JustDreams — Trouvez l'hébergement Idéal sur JustDreams.com, le Plus Grand Site de Voyages au Monde. Des Réservations Faciles, Rapides, Sécurisées et Sans Frais, et un Tarif Garanti. Motels.">  
+        <title> JustDreams - Réservez votre prochain voyage  </title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='CSS/contact.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="icon" href="{{ url_for('static', filename='Image/JustDreamslogo.ico') }}" type="image/x-icon">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+   </head>
 
+   <body>
+        <header> 
+
+            <!-- Formulaire de contact -->
+            <div class="contact-form-container">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='Image/JustDreamslogo.jpg') }}" alt="Logo JustDreams" class="image2">
+                </div>
+
+                <h2>Contactez-nous</h2>
+                <form id="contact-form" method="POST" action="/contact">
+                    <label for="first-name">Prénom :</label>
+                    <input type="text" id="first-name" name="first-name" placeholder="Votre prénom" required>
+                
+                    <label for="last-name">Nom :</label>
+                    <input type="text" id="last-name" name="last-name" placeholder="Votre nom" required>
+                
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" name="email" placeholder="Votre email" required>
+                
+                    <label for="phone">Téléphone :</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Votre numéro de téléphone" required pattern="\d*" title="Veuillez entrer uniquement des chiffres.">
+                
+                    <label for="subject">Objet :</label>
+                    <select id="subject" name="subject" required>
+                        <option value="" disabled selected hidden>Veuillez choisir une option</option>
+                        <option value="reservations">Réservations</option>
+                        <option value="annulations">Annulations</option>
+                        <option value="CGV">Conditions Générales de Vente</option>
+                        <option value="compte">Fermeture ou ouverture de compte</option>
+                        <option value="probleme-sejour">Problème durant un séjour</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                
+                    <label for="message">Questions / Message :</label>
+                    <textarea id="message" name="message" placeholder="Votre message" required></textarea>
+                
+                    <button type="submit" class="btn-submit">Envoyer</button>
+                </form>
+                <a href="/" class="back-home">← Retour à l'accueil</a>
+            </div>
+        </header>
+        <script src="{{ url_for('static', filename='JS/contact.js') }}"></script>
+   </body>
+</html>

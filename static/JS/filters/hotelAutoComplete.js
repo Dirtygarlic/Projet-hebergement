@@ -1,4 +1,40 @@
-console.log("📦 Module hotelAutoComplete.js chargé !");
+// =============================================================
+// 📁 hotelAutoComplete.js
+// -------------------------------------------------------------
+// Ce fichier gère la fonctionnalité d'autocomplétion pour les
+// champs de recherche de villes, à la fois sur la page d'accueil
+// (`#city`) et dans les filtres latéraux (`#cityInput`).
+//
+// 🎯 Objectif :
+// Améliorer l’expérience utilisateur en suggérant automatiquement
+// des villes dès que l’utilisateur tape au moins 3 lettres,
+// en récupérant les suggestions depuis une API (`/autocomplete`).
+//
+// 🔧 Fonctionnalités :
+// - `autoComplete(query, targetInputId, suggestionListId)`
+//   → Envoie une requête vers `/autocomplete?query=...`
+//   → Affiche les suggestions dans une liste (`<ul>` ou autre).
+//   → Remplit automatiquement le champ ciblé au clic sur une suggestion.
+//   → Pour les filtres (`#cityInput`), exclut certains pays/continents
+//     grâce à `isLikelyACity()` afin de ne garder que des villes.
+//
+// - `isLikelyACity(item)` :
+//   → Évite d'afficher des suggestions génériques comme "Europe",
+//     "France", "Canada", etc., lorsqu’on veut uniquement des villes.
+//
+// - Initialisation automatique au chargement de la page :
+//   → Ajoute les écouteurs `keyup` sur les champs `#city` et `#cityInput`
+//   → Lance l’autocomplétion quand l'utilisateur tape dans les champs.
+//
+// 🧩 Utilisé sur :
+// - `index.html` (recherche globale avec `#city`)
+// - `hotel.html` (filtres spécifiques avec `#cityInput`)
+//
+// ✅ Rend la recherche de destination plus rapide, intuitive et dynamique.
+//
+// ⚠️ Les suggestions sont effacées si la saisie est inférieure à 3 caractères.
+// =============================================================
+
 
 export function autoComplete(query, targetInputId, suggestionListId) {
     const suggestionList = document.getElementById(suggestionListId);

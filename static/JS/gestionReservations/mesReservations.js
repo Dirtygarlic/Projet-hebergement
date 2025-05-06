@@ -1,3 +1,40 @@
+// =============================================================
+// 📁 mesReservations.js
+// -------------------------------------------------------------
+// Ce script gère l'affichage dynamique des réservations de
+// l'utilisateur connecté sur la page `/mes-reservations`.
+//
+// 🎯 Objectif :
+// Permettre à un utilisateur connecté de visualiser la liste
+// de ses réservations passées ou en cours, et de pouvoir les annuler.
+//
+// 🔧 Fonctionnalités :
+// - Vérifie si un `user_id` est présent dans le localStorage
+//   → sinon affiche une alerte et empêche le chargement
+// - Fait un appel API à `/api/mes-reservations/<user_id>`
+//   → récupère les réservations de l'utilisateur
+// - Si aucune réservation : affiche un message
+// - Sinon : crée dynamiquement une carte pour chaque réservation :
+//   → image de l’hôtel, nom, dates, nombre de personnes, prix, bouton "Annuler"
+// - Gère l’annulation d’une réservation avec confirmation
+//   → supprime via `DELETE /api/reservations/<reservation_id>`
+//   → recharge la page après succès
+// - Gère aussi un bouton de retour vers l’accueil (`#back-home`)
+//
+// 📦 Dépendances HTML :
+// - Un conteneur avec l’ID `#reservations-container`
+// - Un bouton avec l’ID `#back-home` (facultatif)
+// - Style associé à `.reservation-card` et `.cancel-button`
+//
+// ✅ Avantages :
+// - Interface utilisateur claire et réactive
+// - Interaction fluide sans rechargement serveur
+// - Code simple à maintenir
+//
+// ⚠️ Nécessite que l’utilisateur soit connecté (`user_id` dans localStorage)
+// =============================================================
+
+
 document.addEventListener("DOMContentLoaded", async () => {
     // 🔙 Gère le bouton de retour vers l'accueil
     const backBtn = document.getElementById("back-home");

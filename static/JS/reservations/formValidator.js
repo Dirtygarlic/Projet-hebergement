@@ -1,3 +1,28 @@
+// =============================================================
+// 📁 formValidator.js
+// -------------------------------------------------------------
+// Ce fichier contient la fonction `validateEmailPhoneFields()`
+// qui gère la validation en temps réel des champs email et téléphone
+// dans le formulaire de réservation.
+//
+// 🎯 Objectif :
+// Vérifier que l'utilisateur saisit une adresse email et un numéro
+// de téléphone valides, afficher des messages d'erreur clairs si
+// les champs sont vides ou incorrects, et activer/désactiver le
+// bouton de soumission en conséquence.
+//
+// 🔧 Fonctionnalités :
+// - Validation avec expressions régulières pour l'email et le téléphone.
+// - Affichage dynamique de messages d'erreur en dessous des champs.
+// - Gestion des classes CSS `valid` et `invalid` pour retour visuel.
+// - Désactivation du bouton de soumission tant que les deux champs
+//   ne sont pas valides.
+//
+// ⚠️ Affiche un avertissement dans la console si les éléments requis
+//    ne sont pas trouvés dans le DOM.
+// =============================================================
+
+
 // ============================
 // ✉️📞 formValidator.js
 // ============================

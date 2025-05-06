@@ -1,3 +1,30 @@
+// =============================================================
+// 📁 reservationDateLogic.js
+// -------------------------------------------------------------
+// Ce fichier contient la fonction `setupDateValidation()` qui
+// assure une logique de cohérence entre la date d’arrivée (check-in)
+// et la date de départ (check-out) dans le formulaire de réservation.
+//
+// 🎯 Objectif :
+// Empêcher l’utilisateur de sélectionner une date de départ
+// antérieure ou égale à la date d’arrivée en fixant dynamiquement
+// une date minimale valide pour le check-out.
+//
+// 🔧 Fonctionnalités :
+// - Met à jour automatiquement la valeur minimale du champ `checkout`
+//   dès que la date `checkin` est modifiée.
+// - Affiche un message d’avertissement si la date `checkout` est invalide.
+// - Cache le message si la date sélectionnée devient valide.
+//
+// ⚠️ Affiche un message de warning dans la console si les champs
+//    requis ne sont pas trouvés dans le DOM.
+//
+// ❗ Remarque : Ce fichier a une logique très similaire à `datePickerValidator.js`,
+//    il peut être utile à l’avenir de centraliser ou fusionner ces fonctions.
+// =============================================================
+
+
+
 // ============================
 // 📅 reservationDateLogic.js
 // ============================

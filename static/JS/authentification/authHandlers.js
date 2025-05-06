@@ -1,3 +1,53 @@
+// =============================================================
+// 📁 authHandlers.js
+// -------------------------------------------------------------
+// Ce fichier gère la logique de soumission des formulaires de
+// connexion et d’inscription dans ton application front-end.
+//
+// 🎯 Objectif :
+// Permettre aux utilisateurs de se connecter ou de s’inscrire
+// en toute sécurité, avec retour visuel et validation des champs,
+// puis déclencher l’affichage dynamique de leur session.
+//
+// 🔐 Fonctions principales :
+// 1. `submitLogin(event)`
+//    → Récupère les champs `email` et `password`
+//    → Envoie les données à l’endpoint `/login`
+//    → Affiche une alerte si erreur, ou connecte l'utilisateur
+//    → Met à jour l’interface avec `showUserInfo()`
+// 
+// 2. `submitRegister(event)`
+//    → Vérifie les champs (mot de passe, téléphone, correspondance)
+//    → Envoie les données à l’endpoint `/register`
+//    → Affiche une alerte de succès ou d’erreur
+//    → Met à jour l’interface avec `showUserInfo()`
+//    → Recharge la page si succès
+//
+// 🔧 Validation front-end :
+// - Vérifie la correspondance des mots de passe
+// - Vérifie que le téléphone contient uniquement des chiffres
+// - Vérifie la force du mot de passe via `isStrongPassword()`
+// - Bloque le bouton pendant le traitement (UX améliorée)
+//
+// 📦 Dépendances internes :
+// - `formValidation.js` → `isStrongPassword()`
+// - `sessionManager.js` → `showUserInfo()`
+// - `uiManager.js` → `toggleLoginForm()`
+//
+// ✅ Avantages :
+// - UX fluide et contrôlée
+// - Gestion claire des erreurs
+// - Affichage conditionnel des données utilisateur
+//
+// 📌 À connecter à des listeners comme :
+//   `form.addEventListener("submit", submitLogin)`
+//   ou  `form.addEventListener("submit", submitRegister)`
+//
+// ⚠️ Les éléments HTML doivent avoir les bons IDs :
+// - `#login-email`, `#login-password`, `#register-name`, etc.
+// =============================================================
+
+
 // ============================
 // 📦 Importations des modules
 // ============================
