@@ -7,10 +7,12 @@
         <meta name="description" content="JustDreams — Trouvez l'hébergement Idéal sur JustDreams.com, le Plus Grand Site de Voyages au Monde. Des Réservations Faciles, Rapides, Sécurisées et Sans Frais, et un Tarif Garanti. Motels.">  
         <title> JustDreams - Réservez votre prochain voyage  </title>
         <link rel="stylesheet" href="{{ url_for('static', filename='CSS/index.css') }}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <!-- <link href="/Users/remylenne/Desktop/Projet2/static/JS/bootstrap.min.js" rel="stylesheet"> -->
         <link rel="icon" href="{{ url_for('static', filename='Image/JustDreamslogo.ico') }}" type="image/x-icon" alt="Icône de recherche">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+       
+
    </head>
 
    <body>
@@ -131,7 +133,7 @@
                         <div class="search-fields-container">
                             <!-- Lieu avec suggestions -->
                             <div class="autoComplete">
-                                <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves?">
+                                <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves" autocomplete="off" aria-autocomplete="none" >
                                 <ul id="suggestions-global" class="suggestions-list"></ul>
                             </div>
     
@@ -142,7 +144,7 @@
     
                             <!-- Nombre de personnes (adultes, enfants) -->
                             <div class="people-selector">
-                                <input type="text" id="peopleInput" placeholder="2 adultes - 0 enfant - Animaux ?" class="search-input5" >
+                                <input type="text" id="peopleInput" autocomplete="off" name="peopleInput" inputmode="none" readonly placeholder="2 adultes - 0 enfant(s)" class="search-input5">
                                 <div id="peopleDropdown" class="dropdown-travel-content">
                                     <label for="adults">Nombre d'adultes :</label>
                                     <select id="adults" name="adults">
@@ -235,12 +237,12 @@
     
                 <div class="social-media">
                     <h3>Suivez-nous</h3>
-                    <ul>
-                        <li><a href="https://www.facebook.com" target="_blank">Facebook</a></li>
-                        <li><a href="https://www.twitter.com" target="_blank">Twitter</a></li>
-                        <li><a href="https://www.instagram.com" target="_blank">Instagram</a></li>
-                        <li><a href="https://www.linkedin.com" target="_blank">LinkedIn</a></li>
-                    </ul>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com" class="facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com" class="instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.twitter.com" class="twitter" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.linkedin.com" class="linkedin" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
                 </div>
     
                 <div class="newsletter">

@@ -45,9 +45,26 @@
 // 🗺️ reservationMap.js
 // ============================
 
-
 let markers = [];
 let selectedMarker = null;
+
+const blueIcon = new L.Icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+const redIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
 
 export function getHotelData(params) {
     let imagePath = params.get("image");
@@ -84,11 +101,13 @@ export function createMap(lat, lng) {
 }
 
 
-export function addHotelMarker(hotel, onClickCallback = null) {
+export function addHotelMarker(hotel, onClickCallback = null, loadReviewsCallback = null, isSelected = false) {
     if (!window.map) return;
 
+    const icon = isSelected ? redIcon : blueIcon;
+
     // Ne supprime pas les marqueurs existants, juste ajouter un nouveau marqueur
-    const marker = L.marker([hotel.latitude, hotel.longitude])
+    const marker = L.marker([hotel.latitude, hotel.longitude], { icon })
         .addTo(window.map)
         .bindPopup(`<strong>${hotel.name}</strong><br>${hotel.address}`)
         .on("click", () => {

@@ -27,6 +27,7 @@
 // ============================
 
 import { addHotelMarker } from './reservationMap.js';
+import { getParamsAndReviews } from './urlUtils.js';
 
 /**
  * Charge dynamiquement tous les hôtels depuis l'API et les affiche sur la carte.
@@ -34,6 +35,9 @@ import { addHotelMarker } from './reservationMap.js';
  * @param {Function} loadReviews - Fonction à appeler pour charger les avis.
  */
 export function initReservationMap(updateHotelInfo, loadReviews) {
+    const { params } = getParamsAndReviews();
+    const currentHotelId = params.get("hotel_id");
+
     fetch("/hotels")
         .then(response => response.json())
         .then(hotels => {
@@ -43,7 +47,8 @@ export function initReservationMap(updateHotelInfo, loadReviews) {
             hotels.forEach((hotel, index) => {
                 setTimeout(() => {
                     if (hotel.latitude && hotel.longitude) {
-                        addHotelMarker(hotel, updateHotelInfo, loadReviews);
+                        const isSelected = hotel.id.toString() === currentHotelId;
+                        addHotelMarker(hotel, updateHotelInfo, loadReviews, isSelected);
                     }
                 }, index * 50); // ⏳ Évite surcharge de la carte
             });

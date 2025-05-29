@@ -148,6 +148,7 @@ def create_tables():
                     phone VARCHAR(15), 
                     created_at DATETIME, 
                     stripe_customer_id TEXT DEFAULT NULL,
+                    role TEXT DEFAULT;
                     PRIMARY KEY (id_user), 
                     UNIQUE (email)
                 );

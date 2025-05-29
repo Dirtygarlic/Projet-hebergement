@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert("Veuillez vous connecter pour effectuer une réservation.");
             return;
         }
-
+        console.log("📤 Envoi vers Stripe avec user_id =", user_id);
         await createStripeSession({ ...data, total_price: totalPrice, user_id });
     });
 });

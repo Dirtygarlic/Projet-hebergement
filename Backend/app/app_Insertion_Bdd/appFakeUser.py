@@ -9,7 +9,7 @@
 # 📦 Imports nécessaires
 # ============================
 import random
-from appInscription import app, db, User, bcrypt
+from Backend.app.appInscriptionOk import app, db, User, bcrypt
 from faker import Faker
 from datetime import datetime
 

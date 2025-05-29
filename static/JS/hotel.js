@@ -45,12 +45,12 @@ import { getSpecificFilters } from './filters/hotelSpecificFilters.js';
 import { getGlobalFiltersFromForm } from './filters/hotelGlobalFilters.js';
 import { cleanFilters } from './filters/hotelCleanFilters.js';
 import { fetchHotels, fetchFilteredHotels, fetchAllHotels } from './filters/hotelApi.js';
-import { renderHotelsWithReviews } from './filters/hotelRender.js';
+import { renderHotelsWithReviews, resetHotelCache, clearHotelFilterMode, getIsFilterMode, getHotelCache, renderAllFilteredHotels } from './filters/hotelRender.js';
 import { autoComplete } from './filters/hotelAutoComplete.js';
 import { checkLoginOnLoad } from './authentification/sessionManager.js';
 
 
-// ============================
+// ============================s
 // 2. 🔧 Variables globales
 // ============================
 let isGlobalSearchActive = false;
@@ -123,9 +123,14 @@ document.getElementById("search-form").addEventListener("submit", function (even
         if (!response.ok) throw new Error(`Erreur: ${response.statusText}`);
         return response.json();
     })
-    .then(hotels => {
-        console.log("✅ Hôtels trouvés via recherche générale :", hotels);
-        renderHotelsWithReviews(hotels);
+    .then(async hotels => {
+        renderAllFilteredHotels(hotels);  // ⬅️ Important pour tout afficher d’un coup
+        try {
+            const response = await fetch("/api/hotels/count");
+            const total = (await response.json()).total;
+            updateDisplayedHotelCount(hotels.length, total, true);
+        } catch (e) {
+        }
         isGlobalSearchActive = false;
     })
     .catch(error => {
@@ -160,7 +165,18 @@ async function fetchFilteredHotelsFromURL() {
     }
 
     console.log("🔍 Recherche avec filtres (depuis URL) :", filters);
-    await fetchFilteredHotels(filters, renderHotelsWithReviews);
+    await fetchFilteredHotels(filters, async (hotels) => {
+        renderAllFilteredHotels(hotels);
+    
+        try {
+            const response = await fetch("/api/hotels/count");
+            const total = (await response.json()).total;
+            updateDisplayedHotelCount(hotels.length, total, true);
+        } catch (e) {
+            console.error("❌ Erreur récupération total dans fetchFilteredHotelsFromURL :", e);
+            updateHotelCountDisplay(hotels.length);
+        }
+    });   
 }
 
 async function applyFilters() {
@@ -181,7 +197,17 @@ async function applyFilters() {
 
     let filters = cleanFilters(getSpecificFilters());
 
-    await fetchHotels(filters, renderHotelsWithReviews);
+    await fetchHotels(filters, async (hotels) => {
+        renderAllFilteredHotels(hotels);
+        try {
+            const response = await fetch("/api/hotels/count");
+            const total = (await response.json()).total;
+            updateDisplayedHotelCount(hotels.length, total, true);
+        } catch (e) {
+            console.error("❌ Erreur récupération total après filtres :", e);
+            updateHotelCountDisplay(hotels.length);
+        }
+    });
 
     setTimeout(() => {
         isGlobalSearchActive = false;
@@ -202,6 +228,9 @@ function resetFilters() {
     isFiltering = false;
     isFilterProcessing = false;
     isGlobalSearchActive = false;
+    offset = 0;
+
+    clearHotelFilterMode(); // ⬅️ remet le mode normal (chargement via API)
 
     const filterForm = document.getElementById('filterForm');
     if (filterForm) filterForm.reset();
@@ -214,23 +243,104 @@ function resetFilters() {
         fetchAllHotelsTimeout = null;
     }
 
-    fetchAllHotels(renderHotelsWithReviews);
+    const container = document.getElementById("hotels-list");
+    if (container) container.innerHTML = "";
+
+    const countDisplay = document.getElementById("hotel-count");
+    if (countDisplay) countDisplay.textContent = "";
+
+    loadMoreHotels(); // ✅ recharge à partir de offset=0 avec limit=10
+
+    fetch("/api/hotels/count")
+        .then(res => res.json())
+        .then(data => updateDisplayedHotelCount(10, data.total)) // ← on affiche 10/106
+        .catch(err => console.error("❌ Erreur mise à jour compteur après reset :", err));
+}
+
+function updateHotelCountDisplay(count) {
+    const countDisplay = document.getElementById("hotel-count");
+    if (countDisplay) {
+        countDisplay.textContent = `${count} hôtels trouvés`;
+    }
+}
+
+function updateDisplayedHotelCount(displayed, total, isFilter = false) {
+    const countDisplay = document.getElementById("hotel-count");
+    if (countDisplay) {
+        countDisplay.innerHTML = isFilter
+            ? `<strong style="color: green;">Résultat : ${displayed} hôtel(s) trouvés sur ${total}</strong>`
+            : `Affichage : ${displayed} hôtels sur ${total}`;
+    }
 }
 
 
 // ============================
 // 8. 🚀 Initialisation DOM
 // ============================
+let offset = 0;
+const limit = 10;
+let isLoading = false;
+
+async function loadMoreHotels() {
+    if (isLoading) return;
+    isLoading = true;
+
+    if (getIsFilterMode()) {
+        renderHotelsWithReviews(getHotelCache(), true); 
+        isLoading = false;
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/hotels?offset=${offset}&limit=${limit}`);
+        const hotels = await response.json();
+
+        if (hotels.length > 0) {
+            renderHotelsWithReviews(hotels, false);
+            document.getElementById("load-more-btn").style.display = "block";
+            offset += hotels.length;
+
+            // Appel pour récupérer le nombre total d’hôtels
+            const countResponse = await fetch("/api/hotels/count");
+            const countData = await countResponse.json();
+            const total = countData.total;
+
+            updateDisplayedHotelCount(offset, total);
+        } else {
+            document.getElementById("load-more-btn").style.display = "none";
+        }
+    } catch (error) {
+        console.error("❌ Erreur lors du chargement paginé :", error);
+    } finally {
+        isLoading = false;
+    }
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
     checkLoginOnLoad();
+
+    function displayTotalHotelCount() {
+        fetch("/api/hotels/count")
+            .then(res => res.json())
+            .then(data => {
+                const countDisplay = document.getElementById("hotel-count");
+                if (countDisplay) {
+                    countDisplay.textContent = `${data.total} hôtels trouvés`;
+                }
+            })
+            .catch(err => console.error("❌ Erreur comptage total hôtels :", err));
+    }
 
     const filters = getURLParams();
     if (filters.destination || filters.start_date) {
         fetchFilteredHotelsFromURL();
     } else {
-        fetchAllHotels(renderHotelsWithReviews);
+        displayTotalHotelCount();
+        loadMoreHotels(); // ✅ Appel unique pour lazy loading
     }
-    isGlobalSearchActive = false;
+
+    document.getElementById("load-more-btn").addEventListener("click", loadMoreHotels);
 
     const searchFiltersButton = document.getElementById("search-filters");
     const resetFiltersButton = document.getElementById('reset-filters');

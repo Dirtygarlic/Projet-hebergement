@@ -11,7 +11,7 @@
         <!-- <link href="/Users/remylenne/Desktop/Projet2/static/JS/bootstrap.min.js" rel="stylesheet"> -->
         <link rel="icon" href="{{ url_for('static', filename='Image/JustDreamslogo.ico') }}" type="image/x-icon">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
 
    </head>
 
@@ -133,7 +133,7 @@
                     <div class="search-fields-container">
                         <!-- Lieu avec suggestions -->
                         <div class="autoComplete">
-                            <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves?">
+                            <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves" autocomplete="off" aria-autocomplete="none" >
                             <ul id="suggestions-global" class="suggestions-list"></ul>
                         </div>
 
@@ -144,7 +144,7 @@
 
                         <!-- Nombre de personnes (adultes, enfants) -->
                         <div class="people-selector">
-                            <input type="text" id="peopleInput" placeholder="2 adultes - 0 enfant - Animaux ?" class="search-input5" >
+                            <input type="text" id="peopleInput" autocomplete="off" name="peopleInput" inputmode="none" readonly placeholder="2 adultes - 0 enfant(s)" class="search-input5">
                             <div id="peopleDropdown" class="dropdown-travel-content">
                                 <label for="adults">Nombre d'adultes :</label>
                                 <select id="adults" name="adults">

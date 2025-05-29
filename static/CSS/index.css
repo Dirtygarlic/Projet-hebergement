@@ -49,6 +49,7 @@ body {
 #user-menu-container {
     position: relative;
     display: inline-block;
+
 }
   
 #user-menu-button {
@@ -651,6 +652,67 @@ h3 {
     border-top: 1px solid #ccc;
 }
 
+/* Icônes de réseaux sociaux avec couleurs spécifiques */
+footer .social-icons a {
+    font-size: 22px;
+    margin-right: 15px;
+    transition: transform 0.3s ease;
+}
+
+footer .social-icons a:hover {
+    transform: scale(1.2);
+}
+
+/* Couleurs propres à chaque réseau */
+footer .social-icons .facebook {
+    color: #3b5998;
+}
+
+footer .social-icons .instagram {
+    color: #e4405f;
+}
+
+footer .social-icons .twitter {
+    color: #1da1f2;
+}
+
+footer .social-icons .linkedin {
+    color: #0077b5;
+}
+
+/* 🌐 Liens Utiles Modernes */
+.useful-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.useful-links ul li {
+    margin-bottom: 8px;
+}
+
+.useful-links ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    position: relative;
+    padding-left: 20px;
+    display: inline-block;
+    transition: color 0.3s ease;
+}
+
+.useful-links ul li a::before {
+    content: "›"; /* flèche élégante */
+    position: absolute;
+    left: 0;
+    color: #0077b5;
+    font-weight: bold;
+}
+
+.useful-links ul li a:hover {
+    color: #0077b5;
+    transform: translateX(2px);
+}
+
 /* ===================================================== */
 /* 📱 7. RESPONSIVE DESIGN (mobile/tablette)             */
 /* ===================================================== */
@@ -1168,12 +1230,12 @@ h3 {
         align-items: center;
         justify-content: center;
         margin-top: -120px;
-        height:80px;
+        height:100px;
     }
 
     /* Class de l image du logo */
     .image2 {
-        height: 80px;
+        height: 100px;
         max-width: 100px;
         z-index: 2;
     }
@@ -1196,16 +1258,16 @@ h3 {
         font-size: 14px;
         text-align: center;
         padding: 8px 16px;
-        width: 100%;           /* plus 100% */
-        max-width: 200px;      /* limite la taille */
+        width: 100%;           
+        max-width: 200px;     
         border-radius: 4px;
     }
     
     /* Recherche Button */
     .search-button2 {
-        font-size: 14px;
-        padding: 6px 2px;
-        width: 65%;
+        font-size: 16px;
+        padding: 12px 20px;
+        width: 100%; 
         text-align: center;
         margin-top:10px;
         border-radius: 4px;
@@ -1224,8 +1286,8 @@ h3 {
     .search-input4,
     .search-input5 {
         width: 100%;
-        padding: 10px;
-        font-size: 12px;
+        padding: 14px 12px;         /* ⬆️ Plus d’espace intérieur */
+        font-size: 16px; 
     }
 
     .search-input3 {
@@ -1249,6 +1311,65 @@ h3 {
         font-size: 16px;
     }
 
+    /* Menu utilisateur mobile */
+    #user-menu-container {
+        position: absolute;
+        top: 20px; /* même niveau que Menu et Langue */
+        left: 42.5%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        z-index: 5;
+        max-width: 180px;
+    }
+
+    /* Bouton Mon compte */
+    #user-menu-button {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 20px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+    }
+
+    /* Dropdown utilisateur mobile */
+    #user-dropdown {
+        font-size: 14px;
+        margin-top: 4px;
+        text-align: center;
+        background-color: #fff;
+        padding: 10px 12px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        min-width: 160px;
+        left: 50%;
+        transform: translateX(-50%);
+        position: absolute;
+        top: 100%; 
+    }
+
+    #user-dropdown p {
+        margin: 0 0 6px 0;
+        font-weight: bold;
+    }
+    
+    #user-dropdown a {
+        display: block;
+        margin: 6px 0;
+        color: #333;
+        text-decoration: none;
+    }
+
+    #user-dropdown a:hover {
+        text-decoration: underline;
+    }
+
+
     /* Background Image */
     .background-image {
         height: 240px;
@@ -1266,11 +1387,12 @@ h3 {
 
     /* Footer */
     .footer-content {
+        display: flex;
         flex-direction: column;
         text-align: center;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 8px;
         padding: 10px 20px;
     }
 
@@ -1298,7 +1420,7 @@ h3 {
     }
 
     .footer-content h3 {
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         font-size: 14px;
     }
 
@@ -1320,6 +1442,13 @@ h3 {
         margin: 0px;
         box-sizing: border-box;
         text-align: center;
+    }
+
+    .search-form6 {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        border:none;
     }
 
     /* Class bouton menu navigation */

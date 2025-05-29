@@ -10,11 +10,54 @@
 <body>
     <header>
         <h1>Mes Réservations</h1>
-        <div style="text-align: center; margin-bottom: 20px;">
-            <button id="back-home" class="back-button">🏠 Retour à l'accueil</button>
+
+        <div class="button-container">
+          <button id="back-home" class="back-button">🏠 Retour à l'accueil</button>
+        </div>
+
+        <div class="stats-cards" id="admin-stats" style="display: none;">
+            <div class="stat-card stat-card-yellow" title="Nombre total de réservations">
+              <h4>Nb total réservations</h4>
+              <p id="total-resa">0</p>
+            </div>
+            <div class="stat-card stat-card-green" title="Réservations actives">
+              <h4>Réservations en cours</h4>
+              <p id="active-resa">0</p>
+            </div>
+            <div class="stat-card stat-card-red" title="Réservations annulées">
+              <h4>Réservations annulées</h4>
+              <p id="cancelled-resa">0</p>
+            </div>
+            <div class="stat-card stat-card-violet" title="Nombre de clients différents">
+              <h4>Nombre de clients</h4>
+              <p id="unique-clients">0</p>
+            </div>
+         </div>   
+
+         <div id="admin-actions" class="admin-clean-box">
+          <button id="clean-pending-btn" class="clean-button">🧹 Nettoyer réservations en attente (+24h)</button>
         </div>
     </header>
 
+    <div class="filters-box">
+        <div class="filters">
+            <label><input type="checkbox" id="show-cancelled"> Afficher les réservations annulées</label>
+        </div>
+    
+        <!-- 🎛️ Filtres par noms clients -->
+        <div class="client-filter">
+            <label for="client-search">🔍 Rechercher un client :</label>
+            <input type="text" id="client-search" placeholder="Tapez un nom..." />
+        </div>
+
+        <!-- 🎛️ Filtres par hôtels -->
+        <div class="hotel-filter">
+          <label for="hotel-search">🏨 Rechercher un hôtel :</label>
+          <input type="text" id="hotel-search" placeholder="Tapez un hôtel..." />
+        </div>
+    </div>
+    
+      
     <main>
         <div id="reservations-container" class="reservations-container">
             <!-- Les cartes de réservations seront injectées ici -->

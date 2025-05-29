@@ -131,7 +131,7 @@
                         <div class="search-fields-container">
                             <!-- Lieu avec suggestions -->
                             <div class="autoComplete">
-                                <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves?">
+                                <input type="text" id="city" name="destination" class="search-input3" placeholder="Destination de vos rêves" autocomplete="off" aria-autocomplete="none" >
                                 <ul id="suggestions-global" class="suggestions-list"></ul>
                             </div>
     
@@ -142,7 +142,7 @@
     
                             <!-- Nombre de personnes (adultes, enfants) -->
                             <div class="people-selector">
-                                <input type="text" id="peopleInput" placeholder="2 adultes - 0 enfant - Animaux ?" class="search-input5" >
+                                <input type="text" id="peopleInput" autocomplete="off" name="peopleInput" inputmode="none" readonly placeholder="2 adultes - 0 enfant(s)" class="search-input5">
                                 <div id="peopleDropdown" class="dropdown-travel-content">
                                     <label for="adults">Nombre d'adultes :</label>
                                     <select id="adults" name="adults">
@@ -218,7 +218,7 @@
                     <div class="filter-box">
                         <h3>Choix de la ville</h3>
                         <label for="cityInput">Ville :</label>
-                        <input type="text" id="cityInput" name="city" placeholder="Entrez une ville">
+                        <input type="text" id="cityInput" name="cityInput" placeholder="Entrez une ville" autocomplete="off" aria-autocomplete="none">
                         <ul id="suggestions-filter" class="suggestions-list"></ul>
                     </div>
             
@@ -302,8 +302,10 @@
             
                 <div class="hotels-container">
             <!-- Conteneur pour afficher les résultats -->
-                 <div id="hotels-list" class="row"></div>
-               <!-- <form id="filter-form"></form> -->
+                    <div id="hotels-list" class="row"></div>
+                    <div style="text-align:center;">
+                        <button id="load-more-btn" class="search-button2">Charger plus</button>
+                    </div>
                 </div>
             </div>
         </main>

@@ -1,47 +1,312 @@
+/* 💡 Conteneur en grille */
+.reservations-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px 16px;
+  padding: 10px;
+}
+
+/* 🎛️ Conteneur de tous les filtres */
+.filters-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 20px;
+  margin: 10px 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* 🎛️ Zone de la checkbox */
+.filters {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: bold;
+  gap: 6px;
+}
+
+.filters input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+/* 🔍 Zone recherche par nom */
+.client-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.client-filter label {
+  font-weight: bold;
+}
+
+.client-filter input {
+  padding: 6px 10px;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+/* 🔍 Zone recherche par hôtel */
+.hotel-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.hotel-filter label {
+  font-weight: bold;
+}
+
+.hotel-filter input {
+  padding: 6px 10px;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+/* 🎫 Carte réservation */
 .reservation-card {
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 16px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .reservation-card img {
-    width: 120px;
-    height: 90px;
-    border-radius: 8px;
-    margin-right: 16px;
-  }
-  
-  .reservation-info {
-    flex: 1;
-  }
-  
-  .cancel-button {
-    background-color: #ff4444;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  
-  .back-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    margin-top: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-    text-align: center;
-    margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: white;
+  transition: transform 0.2s ease;
+}
+
+.reservation-card:hover {
+  transform: scale(1.02);
+}
+
+/* 🖼️ Image */
+.reservation-card img {
+  width: 100%;
+  height: 140px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* ℹ️ Contenu */
+.reservation-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reservation-info p {
+  margin: 2px 0;
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+.reservation-info h3 {
+  margin: 4px 0;
+  font-size: 1rem;
+}
+
+/* ❌ Bouton annulation */
+.cancel-button {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 6px;
+  align-self: start;
+  font-size: 0.9rem;
+}
+
+/* 🔙 Bouton retour */
+.back-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  margin-top: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .back-button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
+}
+
+/* 👑 Badge admin */
+.admin-badge {
+  background-color: #e91e63;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  margin-left: 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+/* ❌ Style des cartes annulées */
+.cancelled-card {
+  opacity: 0.5;
+  filter: grayscale(100%);
+  pointer-events: none;
+  position: relative;
+}
+
+/* ❌ Étiquette “Annulée” */
+.cancelled-label {
+  display: inline-block;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+/* ❌ Badge flottant "Annulée" */
+.cancelled-card::after {
+  content: "Réservation annulée";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #dc3545;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+/* 📊 Stats */
+.reservation-stats {
+  display: flex;
+  gap: 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  margin: 8px 20px 0;
+  flex-wrap: wrap;
+}
+
+.reservation-stats p {
+  margin: 0;
+}
+
+.stats-cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 10px auto 20px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  border-radius: 12px;
+  padding: 12px 20px;
+  text-align: center;
+  min-width: 140px;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: default;
+}
+
+/* 🎨 Couleurs par type */
+.stat-card-yellow {
+  background-color: #fbc02d;
+}
+
+.stat-card-green {
+  background-color: #4caf50;
+}
+
+.stat-card-red {
+  background-color: #f44336;
+}
+
+.stat-card-violet {
+  background-color: violet;
+}
+
+.stat-card h4 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.stat-card p {
+  margin: 4px 0 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* 🔙 Bouton de retour + nettoyage */
+.button-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.admin-clean-box {
+  text-align: center;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.clean-button {
+  background-color: #9c27b0;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s;
+}
+
+.clean-button:hover {
+  background-color: #7b1fa2;
+}
+
+.action-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s;
+}
+
+.action-button:hover {
+  background-color: #0056b3;
+}
+
+/* 📱 Responsive */
+@media (max-width: 480px) {
+  .stat-card {
+    flex: 1 1 45%;
+    margin: 4px 0;
+  }
 }

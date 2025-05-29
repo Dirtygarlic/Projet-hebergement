@@ -46,6 +46,18 @@ export async function fetchAllHotelsAPI() {
     return response.json();
 }
 
+// 📡 API : Récupère les hôtels selon filtres spécifiques (pagination)
+export async function fetchHotelsPaginated(offset = 0, limit = 10) {
+    try {
+        const response = await fetch(`/api/hotels?offset=${offset}&limit=${limit}`);
+        if (!response.ok) throw new Error("Erreur lors du chargement des hôtels paginés");
+        return await response.json();
+    } catch (error) {
+        console.error("❌ Erreur fetchHotelsPaginated:", error);
+        return [];
+    }
+}
+
 // 📡 API : Récupère les hôtels selon filtres spécifiques
 export async function fetchHotelsAPI(filters = {}) {
     const response = await fetch('/filter_hotels', {

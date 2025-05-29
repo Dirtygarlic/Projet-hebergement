@@ -45,6 +45,7 @@
 #    7.5. /get_reviews (GET)     → Avis d’un hôtel
 #    7.6. /get_hotel_name (GET)  → Nom d’un hôtel
 #    7.7. /get_price_per_night/<id> (GET) → Prix d’un hôtel
+#    7.8. /get_hotel_id (GET)    → ID d’un hôtel
 
 # 8. 📦 Réservations & Stripe
 #    8.1. /api/reservations (POST)        → Réservation (désactivé)
@@ -56,8 +57,9 @@
 #    9.2. /cancel               → Paiement annulé
 
 # 10. 👤 Espace utilisateur
-#    10.1. /api/mes-reservations/<user_id> → Réservations utilisateur
-#    10.2. /api/reservations/<id> (DELETE) → Annulation d’une réservation
+#    10.1. /api/mes-reservations/<user_id> (GET) → Réservations utilisateur
+#    10.2. /api/mes-reservations/<user_id> → Réservations utilisateur
+#    10.3. /api/reservations/<id> (DELETE) → Annulation d’une réservation
 
 # 11. 🧹 Nettoyage automatique des réservations
 #    11.1. /admin/clean-pending           → Nettoyage manuel
@@ -75,72 +77,47 @@
 # =========================================
 
 # 1.1. Import des modules nécessaires
-import sqlite3
-import logging
-import traceback
-import stripe
 import os
-import threading
+import sqlite3
+import stripe
 import time
+import traceback
+import logging
+import threading
+from flask import Flask, g, render_template, request, jsonify, redirect, url_for, flash, render_template_string
 from flask_cors import CORS
 from flask_mail import Mail, Message
-from flask import Flask, flash, g, request, jsonify, redirect, render_template, render_template_string, url_for
-from appInscription import inscription_bp, init_inscription_extensions
-from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from datetime import datetime, timedelta, timezone
+from appInscription import inscription_bp, init_inscription_extensions
 
-
-# 1.2. Chargement des variables d’environnement (.env)
+# Charger les variables d’environnement
 load_dotenv("securite_mdp.env")
+
+# Configuration de Stripe
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
 stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY")
 
-print("🔑 Clé publique Stripe (test) chargée :", "OK" if stripe_public_key else "Non trouvée")
-
-
-# 1.3. Définition du chemin absolu de la base de données
+# Chemin vers la base SQLite
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, 'hotels.db')
 
-
-# 1.4. Initialisation de l'application Flask
-app = Flask(__name__, static_folder="../../static", template_folder="../../Frontend/templates")  # Chemin relatif vers les templates
+# Initialisation Flask
+app = Flask(__name__, static_folder="../../static", template_folder="../../Frontend/templates")
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "justdreams_secret_123")
 CORS(app)
 
-
-# 1.5. Configuration de la base de données pour SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-
-# 1.6. Configuration Stripe           
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
-endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "justdreams_secret_123")
-
-
-# 1.7 Configuration Flask-Mail 
+# Initialisation Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
-
-
-#1.8. Initialisation manuelle SQLAlchemy
-engine = create_engine(f"sqlite:///{db_path}")
-Session = sessionmaker(bind=engine)
-db_session = Session()
-
-
-# 1.9. Initialisation de Flask-Mail
 mail = Mail(app)
-mail.init_app(app)
 
-
-# 1.10. Initialisation des extensions liées à l'inscription
+# Initialisation extensions liées à l’inscription (SQLAlchemy uniquement pour appInscription)
 init_inscription_extensions(app)
 app.register_blueprint(inscription_bp)
 
@@ -451,10 +428,10 @@ def contact_post():
 
 
 # =========================================
-# 6. 🔍 Endpoints de recherche & filtrage
+# 7. 🔍 Endpoints de recherche & filtrage
 # =========================================
 
-# 6.1. Autocomplétion pour villes, pays et continents sur toutes les pages
+# 7.1. Autocomplétion pour villes, pays et continents sur toutes les pages
 @app.route("/autocomplete", methods=["GET"])
 def autocomplete():
     query = request.args.get("query", "").lower()
@@ -477,7 +454,7 @@ def autocomplete():
     return jsonify(continent_results + country_results + city_results)
 
 
-# 6.2. Récupération complète des hôtels sur hotel.html
+# 7.2. Récupération complète des hôtels sur hotel.html
 @app.route('/hotels', methods=['GET'])
 def get_hotels():
     with get_db_connection() as conn:
@@ -544,7 +521,7 @@ def get_hotels():
     return jsonify(hotels)
 
 
-# 6.3. Récupération des hotels selon destination, dates, invités (pour toutes les pages)
+# 7.3. Récupération des hotels selon destination, dates, invités (pour toutes les pages)
 @app.route("/recherche", methods=["POST"])
 def recherche_hotels():
     try:
@@ -668,7 +645,7 @@ def recherche_hotels():
         return jsonify({'error': str(e)}), 500
     
     
-# 6.4. Filtres avancés sur les hôtels (prix, équipements, etc.) pour la page hotel.html
+# 7.4. Filtres avancés sur les hôtels (prix, équipements, etc.) pour la page hotel.html
 @app.route('/filter_hotels', methods=['POST'])
 def filter_hotels():
     print("🚀 Route '/filter_hotels' appelée !")
@@ -864,7 +841,7 @@ def filter_hotels():
         return jsonify({'error': str(e)}), 500
 
 
-# 6.5. Récupération des avis d'un hôtel tries par note, date ou ordre alphabétique sur reservations.html
+# 7.5. Récupération des avis d'un hôtel tries par note, date ou ordre alphabétique sur reservations.html
 @app.route('/get_reviews', methods=['GET'])
 def get_reviews():
     """Récupère les avis d'un hôtel donné, triés par date ou par note"""
@@ -909,7 +886,7 @@ def get_reviews():
     return jsonify(reviews)
 
 
-# 6.6. Récupération du nom d'un hôtel à partir de son ID sur paiement.html
+# 7.6. Récupération du nom d'un hôtel à partir de son ID sur paiement.html
 @app.route('/get_hotel_name')
 def get_hotel_name():
     hotel_id = request.args.get("hotel_id")
@@ -928,7 +905,7 @@ def get_hotel_name():
         return jsonify({"error": "Hôtel non trouvé"}), 404
     
 
-# 6.7. Récupération du prix par nuit d'un hôtel sur paiement.html
+# 7.7. Récupération du prix par nuit d'un hôtel sur paiement.html
 @app.route('/get_price_per_night/<int:hotel_id>', methods=['GET'])
 def get_price_per_night(hotel_id):
     conn = get_db_connection()
@@ -941,20 +918,101 @@ def get_price_per_night(hotel_id):
         return jsonify({"price_per_night": result[0]})
     else:
         return jsonify({"error": "Hôtel non trouvé"}), 404
+    
+# 7.8. Msie en place du chargement par pagination des hôtels
+@app.route("/api/hotels", methods=["GET"])
+def get_hotels_paginated():
+    try:
+        offset = int(request.args.get("offset", 0))
+        limit = int(request.args.get("limit", 10))
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT hotels.*, cities.name AS city
+            FROM hotels
+            JOIN cities ON hotels.city_id = cities.id
+            LIMIT ? OFFSET ?
+        """, (limit, offset))
+
+        hotels = []
+        for row in cursor.fetchall():
+            hotel_id = row["id"]
+
+            # ✅ Récupérer les avis pour chaque hôtel
+            cursor.execute("""
+                SELECT r.rating, r.comment, r.date_posted, u.first_name, u.name
+                FROM reviews r
+                JOIN user u ON r.user_id = u.id_user
+                WHERE r.hotel_id = ?
+                ORDER BY r.date_posted DESC
+            """, (hotel_id,))
+            reviews = [{
+                "first_name": review["first_name"],
+                "last_name": review["name"],
+                "rating": review["rating"],
+                "comment": review["comment"],
+                "date_posted": review["date_posted"]
+            } for review in cursor.fetchall()]
+
+            hotels.append({
+                "id": row["id"],
+                "name": row["name"],
+                "stars": row["stars"],
+                "price_per_night": row["price_per_night"],
+                "hotel_rating": row["hotel_rating"],
+                "city": row["city"],
+                "description": row["description"],
+                "address": row["address"] if row["address"] not in (None, "", "null") else "Adresse inconnue",
+                "latitude": row["latitude"],
+                "longitude": row["longitude"],
+                "image": f"/static/Image/{row['image_url']}" if row["image_url"] else "/static/Image/default.jpg",
+                "equipments": [
+                    equip for equip in [
+                        "Parking" if row["parking"] else None,
+                        "Restaurant" if row["restaurant"] else None,
+                        "Piscine" if row["piscine"] else None,
+                        "Animaux admis" if row["pets_allowed"] else None,
+                        "Salle de sport" if row["gym"] else None,
+                        "Spa" if row["spa"] else None,
+                        "Wi-Fi gratuit" if row["free_wifi"] else None,
+                        "Climatisation" if row["air_conditioning"] else None,
+                        "Borne recharge" if row["ev_charging"] else None,
+                        "Accès PMR" if row["wheelchair_accessible"] else None,
+                        "Machine à laver" if row["washing_machine"] else None,
+                        "Kitchenette" if row["kitchenette"] else None
+                    ] if equip is not None
+                ],
+                "reviews": reviews
+            })
+
+        conn.close()
+        return jsonify(hotels)
+
+    except Exception as e:
+        print("❌ Erreur dans get_hotels_paginated :", e)
+        return jsonify({"error": str(e)}), 500
+
+# 7.9. Récupération du nombre total d’hôtels (non paginée)
+@app.route("/api/hotels/count", methods=["GET"])
+def count_all_hotels():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM hotels")
+        total = cursor.fetchone()[0]
+        conn.close()
+        return jsonify({"total": total})
+    except Exception as e:
+        print("❌ Erreur lors du comptage des hôtels :", e)
+        return jsonify({"error": str(e)}), 500
 
 
 # =========================================
-# 7. 📦 Réservations & Stripe
+# 8. 📦 Réservations & Stripe
 # =========================================
 
-# 7.1. Creation d'une réservation mais pas inseree daans la BDD
-@app.route("/api/reservations", methods=["POST"])
-def create_reservation():
-    print("ℹ️ Endpoint /api/reservations appelé mais non utilisé.")
-    return jsonify({"message": "Endpoint désactivé. Utilisez Stripe Webhook pour insérer la réservation."}), 200
-
-
-# 7.2. Création d'un webhook Stripe  
+# 8.1. Création d'un webhook Stripe  
 @app.route("/stripe-webhook", methods=["POST"])
 def stripe_webhook():
     payload = request.data
@@ -989,6 +1047,11 @@ def stripe_webhook():
 
             now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
+            user_id_str = metadata.get("user_id", "")
+            
+            user_id = int(user_id_str) if user_id_str.isdigit() else None
+            print("👤 user_id reçu dans webhook :", user_id_str)
+
             cursor.execute("""
                 INSERT INTO reservations (
                     hotel_id, user_id, user_name, email, checkin, checkout, guests, adults, children, 
@@ -996,7 +1059,7 @@ def stripe_webhook():
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'paid', ?, ?)
             """, (
                 metadata.get("hotel_id"),
-                int(metadata["user_id"]) if metadata.get("user_id") and metadata.get("user_id").isdigit() else None,
+                user_id, 
                 metadata.get("user_name"),
                 metadata.get("email"),
                 metadata.get("checkin"),
@@ -1064,14 +1127,15 @@ def stripe_webhook():
     return '', 200
  
 
-# 7.3. Crée une session de paiement Stripe
+# 8.3. Crée une session de paiement Stripe
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     try:
         data = request.json
         print("📩 Données reçues pour Stripe :", data)
+
         hotel_id = int(data.get("hotelId"))
-        guests = int(data.get("guests", 1))  # Valeur par défaut
+        guests = int(data.get("guests", 1))
         checkin = data.get("checkin")
         checkout = data.get("checkout")
 
@@ -1079,12 +1143,12 @@ def create_checkout_session():
             return jsonify({"error": "checkin ou checkout manquant"}), 400
 
         user_id = data.get("user_id")
+        print("👤 user_id reçu du front :", user_id)
 
-        # 🕓 Calcul du nombre de nuits
-        nights = (datetime.strptime(checkin, "%Y-%m-%d") - datetime.strptime(checkout, "%Y-%m-%d")).days
-        nights = abs(nights) if nights > 0 else 1  # Sécurité pour éviter 0 ou négatif
+        total_price = float(data.get("total_price"))
+        amount = int(total_price * 100)
+        print(f"💰 Prix total envoyé : {total_price}€ → {amount} centimes")
 
-        # 💰 Récupérer le prix par nuit
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT price_per_night FROM hotels WHERE id = ?", (hotel_id,))
@@ -1094,11 +1158,6 @@ def create_checkout_session():
             conn.close()
             return jsonify({"error": "Hôtel introuvable"}), 404
 
-        price_per_night = result[0]
-        amount = int(price_per_night * nights * 100)  # en centimes
-        print(f"💰 Calcul montant total : {amount} centimes ({price_per_night}€/nuit * {nights} nuit(s))")
-
-        # 🔍 Vérifier si l'utilisateur a déjà un stripe_customer_id
         cursor.execute("SELECT email, first_name, name, stripe_customer_id FROM user WHERE id_user = ?", (user_id,))
         user_row = cursor.fetchone()
 
@@ -1120,7 +1179,6 @@ def create_checkout_session():
             customer_id = customer.id
             print(f"✅ Nouveau client Stripe créé : {customer_id}")
 
-            # 🧠 Mise à jour dans la table user
             cursor.execute(
                 "UPDATE user SET stripe_customer_id = ? WHERE id_user = ?",
                 (customer_id, user_id)
@@ -1129,7 +1187,25 @@ def create_checkout_session():
 
         conn.close()
 
-        # 💳 Création session Stripe Checkout
+        # 🧾 Préparation des metadata
+        metadata = {
+            "hotel_id": str(hotel_id),
+            "checkin": checkin,
+            "checkout": checkout,
+            "guests": str(guests),
+            "adults": str(data.get("adults", 1)),
+            "children": str(data.get("children", 0)),
+            "first_name": data.get("firstName"),
+            "gender": data.get("gender"),
+            "phone": data.get("phone"),
+            "user_name": data.get("userName"),
+            "email": data.get("email"),
+            "user_id": str(user_id),
+            "total_price": str(amount / 100)
+        }
+
+        print("🧾 Metadata envoyées à Stripe :", metadata)
+
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             customer=customer_id,
@@ -1144,21 +1220,7 @@ def create_checkout_session():
             mode='payment',
             success_url="http://127.0.0.1:5003/success",
             cancel_url="http://127.0.0.1:5003/cancel",
-            metadata={
-                "hotel_id": str(hotel_id),
-                "checkin": checkin,
-                "checkout": checkout,
-                "guests": str(guests),
-                "adults": str(data.get("adults", 1)),
-                "children": str(data.get("children", 0)),
-                "first_name": data.get("firstName"),
-                "gender": data.get("gender"),
-                "phone": data.get("phone"),
-                "user_name": data.get("userName"),
-                "email": data.get("email"),
-                "user_id": str(user_id),
-                "total_price": str(amount / 100)
-            }
+            metadata=metadata
         )
 
         print(f"✅ Session Stripe créée : {checkout_session.url}")
@@ -1174,10 +1236,10 @@ def create_checkout_session():
 
 
 # =========================================
-# 8. ✅ Pages de confirmation Stripe
+# 9. ✅ Pages de confirmation Stripe
 # =========================================
 
-# 8.1. Affiche une page de succès après paiement Stripe
+# 9.1. Affiche une page de succès après paiement Stripe
 @app.route('/success')
 def success():
     return """
@@ -1192,7 +1254,7 @@ def success():
     """
 
  
-# 8.2. Affiche une page d’échec après annulation Stripe
+# 9.2. Affiche une page d’échec après annulation Stripe
 @app.route('/cancel')
 def cancel():
     return """
@@ -1208,23 +1270,51 @@ def cancel():
 
 
 # =========================================
-# 9. 👤 Espace utilisateur
+# 10. 👤 Espace utilisateur
 # =========================================
 
-# 9.1. Récupération des réservations d'un utilisateur sur mesReservations.html
+# 10.1. Récupération du rôle utilisateur
+@app.route("/api/user-role/<int:user_id>")
+def get_user_role(user_id):
+    with sqlite3.connect("hotels.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT role FROM user WHERE id_user = ?", (user_id,))
+        row = cursor.fetchone()
+        if row:
+            return jsonify({"role": row[0]})
+        return jsonify({"role": "user"})
+
+# 10.2. Récupération des réservations d'un utilisateur sur mesReservations.html
 @app.route("/api/mes-reservations/<int:user_id>")
 def get_user_reservations(user_id):
+    print(f"🔎 Récupération des réservations pour user_id : {user_id}")
     with sqlite3.connect("hotels.db") as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute("""
-            SELECT r.id AS reservation_id, h.name AS hotel_name, h.image_url,
-                   r.checkin, r.checkout, r.guests, r.total_price
-            FROM reservations r
-            JOIN hotels h ON r.hotel_id = h.id
-            WHERE r.user_id = ? AND r.status != 'cancelled'
-            ORDER BY r.checkin DESC
-        """, (user_id,))
+
+        cursor.execute("SELECT role FROM user WHERE id_user = ?", (user_id,))
+        user_row = cursor.fetchone()
+        is_admin = user_row and user_row["role"] == "admin"
+
+        if is_admin:
+            cursor.execute("""
+                SELECT r.id AS reservation_id, r.user_id, h.name AS hotel_name, h.image_url,
+                    r.checkin, r.checkout, r.guests, r.total_price,
+                    r.first_name, r.user_name AS last_name, r.status
+                FROM reservations r
+                JOIN hotels h ON r.hotel_id = h.id
+                ORDER BY r.checkin DESC
+            """)
+        else:
+            cursor.execute("""
+                SELECT r.id AS reservation_id, r.user_id, h.name AS hotel_name, h.image_url,
+                r.checkin, r.checkout, r.guests, r.total_price, r.status
+                FROM reservations r
+                JOIN hotels h ON r.hotel_id = h.id
+                WHERE r.user_id = ?
+                ORDER BY r.checkin DESC
+            """, (user_id,))
+
         reservations = []
         for row in cursor.fetchall():
             image_url = row["image_url"]
@@ -1232,25 +1322,37 @@ def get_user_reservations(user_id):
             reservations.append({
                 "reservation_id": row["reservation_id"],
                 "hotel_name": row["hotel_name"],
-                "image_url": full_image_url,  # ✅ chemin complet
+                "image_url": full_image_url,
                 "checkin": row["checkin"],
                 "checkout": row["checkout"],
                 "guests": row["guests"],
-                "total_price": row["total_price"]
+                "total_price": row["total_price"],
+                "user_id": row["user_id"],  
+                "status": row["status"],
+                "first_name": row["first_name"] if "first_name" in row.keys() else None,
+                "last_name": row["last_name"] if "last_name" in row.keys() else None,
             })
     return jsonify(reservations)
 
 
-
-# 9.2. Annulation des réservations par l'utilisateur
+# 10.3. Annulation des réservations par l'utilisateur
 @app.route("/api/reservations/<int:reservation_id>", methods=["DELETE"])
 def cancel_reservation(reservation_id):
     try:
+        user_id = request.args.get("user_id", type=int)  # 🛡️ Récupère le user_id depuis l'URL (ex: ?user_id=2)
+        if not user_id:
+            return jsonify({"error": "Identifiant utilisateur requis"}), 400
+
         with sqlite3.connect("hotels.db") as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
 
-            # Vérifie si la réservation existe
+            # 🔍 Vérifie si l'utilisateur est admin
+            cursor.execute("SELECT role FROM user WHERE id_user = ?", (user_id,))
+            user = cursor.fetchone()
+            is_admin = user and user["role"] == "admin"
+
+            # 🔍 Vérifie si la réservation existe et appartient bien à l’utilisateur
             cursor.execute("""
                 SELECT r.*, h.name AS hotel_name
                 FROM reservations r
@@ -1262,7 +1364,10 @@ def cancel_reservation(reservation_id):
             if reservation is None:
                 return jsonify({"error": "Réservation introuvable"}), 404
 
-            # Met à jour le statut et ajoute la date d'annulation
+            if not is_admin and reservation["user_id"] != user_id:
+                return jsonify({"error": "Action non autorisée"}), 403
+
+            # ✅ Annulation
             now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute("""
                 UPDATE reservations
@@ -1271,21 +1376,15 @@ def cancel_reservation(reservation_id):
             """, (now, reservation_id))
             conn.commit()
 
-            # 🔐 Sécurisation des champs potentiellement absents
             first_name = reservation["first_name"] or "Client"
             email = reservation["email"] or "noreply@justdreams.fr"
 
-            # 🔄 Charge le template HTML d’annulation
             template_path = os.path.join(
                 os.path.dirname(__file__),
                 "..", "..", "Frontend", "templates", "email_templates", "cancelConfirmation.html"
             )
-
-            print("📨 Email du client :", email)
-
             with open(template_path, encoding="utf-8") as f:
                 html_template = f.read()
-            print("📄 Template HTML chargé avec succès.")
 
             html_email = render_template_string(
                 html_template,
@@ -1298,17 +1397,14 @@ def cancel_reservation(reservation_id):
                 cancelled_at=now
             )
 
-            # 📧 Prépare et envoie le mail
             msg = Message(
                 subject="❌ Votre réservation JustDreams a été annulée",
                 recipients=[email],
                 html=html_email,
                 reply_to="support@justdreams06.com"
             )
-
             try:
                 mail.send(msg)
-                print("📧 Email d'annulation envoyé avec succès.")
             except Exception as e:
                 print("❌ Erreur lors de l’envoi de l'email d'annulation :", e)
 
@@ -1320,10 +1416,10 @@ def cancel_reservation(reservation_id):
 
 
 # =========================================
-# 10. 🧹 Nettoyage automatique des réservations expirées
+# 11. 🧹 Nettoyage automatique des réservations expirées
 # =========================================
 
-# 10.1. Route admin pr vois resa "pending supprimées"
+# 11.1. Route admin pr vois resa "pending supprimées"
 @app.route('/admin/clean-pending', methods=['GET'])
 def admin_clean_pending():
     deleted = clean_old_pending_reservations()
@@ -1337,7 +1433,7 @@ def admin_clean_pending():
 
 
 # =========================================
-# 10. 🧹 Nettoyage automatique des réservations expirées
+# 12. 🧹 Nettoyage automatique des réservations expirées
 # =========================================
 def clean_old_pending_reservations():
     try:
@@ -1386,6 +1482,5 @@ def schedule_cleaning_task(interval_seconds=43200):
 # 🚀 Démarre le serveur Flask
 # ============================
 if __name__ == '__main__':
-        schedule_cleaning_task()
         print("🚀 Flask démarre sur http://127.0.0.1:5003")
         app.run(host='0.0.0.0', port=5003, debug=True)
