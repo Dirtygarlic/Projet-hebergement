@@ -1,3 +1,28 @@
+"""
+===============================================================
+🧩 FICHIER appInscription.py – Gestion des utilisateurs (SQLite)
+===============================================================
+
+Ce fichier centralise toutes les routes et fonctions liées à 
+la gestion des utilisateurs dans l'application Flask, en utilisant 
+SQLite comme base de données. Il est intégré sous forme de 
+Blueprint (`inscription_bp`) pour modulariser l'application.
+
+Il couvre les fonctionnalités suivantes :
+- Initialisation des extensions liées à l'authentification et aux emails
+- Connexion et inscription des utilisateurs avec hachage de mot de passe
+- Validation du numéro de téléphone
+- Envoi d'emails (bienvenue, test, réinitialisation)
+- Suppression de compte utilisateur
+- Réinitialisation sécurisée du mot de passe avec tokens signés
+
+Ce fichier joue un rôle fondamental dans l’authentification et 
+la gestion des comptes utilisateurs, assurant à la fois sécurité, 
+modularité et évolutivité.
+
+NB : Ce fichier est prévu pour une version utilisant SQLite uniquement.
+"""
+
 # =========================================
 # 📚 SOMMAIRE DU FICHIER appInscription.py (SQLite only)
 # =========================================
@@ -218,3 +243,4 @@ def submit_new_password():
     cursor.execute("UPDATE user SET password = ? WHERE email = ?", (hashed, email))
     conn.commit()
     return jsonify({'message': 'Mot de passe mis à jour.'}), 200
+

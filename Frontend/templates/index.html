@@ -7,9 +7,9 @@
         <meta name="description" content="JustDreams — Trouvez l'hébergement Idéal sur JustDreams.com, le Plus Grand Site de Voyages au Monde. Des Réservations Faciles, Rapides, Sécurisées et Sans Frais, et un Tarif Garanti. Motels.">  
         <title> JustDreams - Réservez votre prochain voyage  </title>
         <link rel="stylesheet" href="{{ url_for('static', filename='CSS/index.css') }}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
         <!-- <link href="/Users/remylenne/Desktop/Projet2/static/JS/bootstrap.min.js" rel="stylesheet"> -->
-        <link rel="icon" href="{{ url_for('static', filename='Image/JustDreamslogo.ico') }}" type="image/x-icon" alt="Icône de recherche">
+        <link rel="icon" href="{{ url_for('static', filename='Image/JustDreamslogo.ico') }}" type="image/x-icon">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
        
 
@@ -65,7 +65,7 @@
                             <form id="registerForm" style="display: none;">
                                 <div id="registerFields" class="form-fields">
                                     <label for="register-name">Nom complet:</label>
-                                    <input type="text" id="register-name" name="name" required aria-describedby="name-error">
+                                    <input type="text" id="register-name" name="name" required>
 
                                     <label for="register-firstname">Prénom:</label>
                                     <input type="text" id="register-firstname" name="firstname" required>
@@ -139,7 +139,7 @@
     
                             <!-- Date d'arrivée et date de départ -->
                             <div class="date-picker-container">
-                                <input type="text" id="date-range" name="date_range" class="search-input4" placeholder="Date d'arrivée - Date de départ" readonly aria-placeholder="Sélectionnez une date">
+                                <input type="text" id="date-range" name="date_range" class="search-input4" placeholder="Date d'arrivée - Date de départ">
                             </div>
     
                             <!-- Nombre de personnes (adultes, enfants) -->
